@@ -24,6 +24,7 @@ public class Cart extends utils{
 
     public void addToCart(String Product) throws InterruptedException {
         Thread.sleep(2000);
+        driver.findElement(AppiumBy.androidUIAutomator("new UiSelector().text(\"PRODUCTS\")")).isDisplayed();
         ScreenshotUtil ss = new ScreenshotUtil(driver);
 
         By locator = AppiumBy.androidUIAutomator("new UiSelector().text(\"" + Product + "\")");
