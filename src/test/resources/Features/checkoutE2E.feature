@@ -21,8 +21,28 @@ Feature: Checkout Saucelabs E2E
     | Sauce Labs Fleece Jacket | Sauce Labs Onesie        | Sauce Labs Backpack       | Test.allTheThings() T-Shirt (Red) | Sauce Labs Bike Light | Sauce Labs Bolt T-Shirt           |
     | Sauce Labs Bike Light    | Sauce Labs Onesie        | Sauce Labs Fleece Jacket  | Test.allTheThings() T-Shirt (Red) | Sauce Labs Backpack   | Sauce Labs Bolt T-Shirt           |
 
+  @sort
+  Scenario Outline: User want to Checkout Saucelabs End to End
+    Given User use Device "emulator" and Open the Apps Saucelabs
+    And User input username "standard_user", password "secret_sauce" and Click Login
+    And User click toggle
+    And User click sort "AtZ"
+    And User click sort "ZtA"
+    And User click sort "LtH"
+    And User click sort "HtL"
+    When User add cart product "<product>"
+    When User add cart product "<product2>"
+    When User add cart product "<product3>"
+    When User add cart product "<product4>"
+    When User add cart product "<product5>"
+    When User add cart product "<product6>"
+    And  User checkout the cart
+    Then Checkout Complete
+    Examples:
+      | product                  | product2                 | product3                  | product4                          | product5              | product6                          |
+      | Sauce Labs Fleece Jacket | Sauce Labs Onesie        | Sauce Labs Backpack       | Sauce Labs Bolt T-Shirt           | Sauce Labs Bike Light | Test.allTheThings() T-Shirt (Red) |
 
-    @problem
+  @problem
     Scenario Outline: User want to Checkout Saucelabs End to End
     Given User use Device "emulator" and Open the Apps Saucelabs
     And User input username "problem_user", password "secret_sauce" and Click Login

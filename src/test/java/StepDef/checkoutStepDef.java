@@ -33,7 +33,7 @@ import static org.openqa.selenium.By.xpath;
 public class checkoutStepDef {
     AndroidDriver driver;
     static Process appiumProcess;
-
+    ScreenshotUtil ss = new ScreenshotUtil(driver);
 
     @Given("User use Device {string} and Open the Apps Saucelabs")
     public void userUseDeviceAndOpenTheAppsSaucelabs(String device) throws InterruptedException, MalformedURLException {
@@ -45,8 +45,6 @@ public class checkoutStepDef {
         driver = new AndroidDriver(new URL("http://127.0.0.1:4723"), options);
         DriverManager.setDriver(driver);
         Thread.sleep(2000);
-
-        ScreenshotUtil ss = new ScreenshotUtil(driver);
         ss.takeScreenshotWithResizedHeight("Open Apps");
     }
 
@@ -54,6 +52,18 @@ public class checkoutStepDef {
     public void userInputUsernamePasswordAndClickLogin(String user, String pass) throws InterruptedException {
         Login login = new Login(driver);
         login.login(user, pass);
+    }
+
+    @And("User click toggle")
+    public void userClickToggle() throws InterruptedException {
+        Cart cart = new Cart(driver);
+        cart.toggle();
+    }
+
+    @And("User click sort {string}")
+    public void userClickSort(String sort) throws InterruptedException {
+        Cart cart = new Cart(driver);
+        cart.sort(sort);
     }
 
     @When("User add cart product {string}")
@@ -73,6 +83,7 @@ public class checkoutStepDef {
         WebElement complete = driver.findElement(xpath("//android.widget.TextView[@text=\"CHECKOUT: COMPLETE!\"]"));
         complete.isDisplayed();
         System.out.println(complete.getText());
+        ss.takeScreenshotWithResizedHeight("Checkout Complete");
         driver.findElement(AppiumBy.accessibilityId("test-BACK HOME")).click();
         Thread.sleep(2000);
     }
@@ -151,5 +162,6 @@ public class checkoutStepDef {
         }
         return false; // Jika cmd.exe tidak ditemukan, return false
     }
+
 
 }

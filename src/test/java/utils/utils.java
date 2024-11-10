@@ -8,6 +8,8 @@ import org.openqa.selenium.interactions.PointerInput;
 import org.openqa.selenium.interactions.Sequence;
 
 import io.cucumber.java.Scenario;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -45,7 +47,7 @@ public class utils {
                 // Jika elemen belum ditemukan, melakukan swipeUp
                 swipeUp();
                 // Tambahkan penundaan agar tampilan aplikasi sempat berganti sebelum pengecekan berikutnya
-                Thread.sleep(2000);  // Tunggu 2 detik sebelum mencoba menemukan elemen lagi
+                driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));  // Tunggu 2 detik sebelum mencoba menemukan elemen lagi
             }
             trial++; // Tingkatkan hitungan trial
         }
@@ -141,7 +143,8 @@ public class utils {
                 // Coba temukan elemen
                 if(driver.findElement(locator).isDisplayed()){
                     ss.takeScreenshotWithResizedHeight("Find Product");
-                    Thread.sleep(1000);
+                    waitForElementVisibleWithRetry(locator, 5, 5);
+//                    Thread.sleep(1000);
                 }
                 driver.findElement(locator).click();
                 elementFound = true; // Elemen ditemukan, keluar dari loop
@@ -169,6 +172,24 @@ public class utils {
         if (!elementFound) {
             System.out.println("Elemen tidak ditemukan setelah 6 kali swipe (3 up dan 3 down).");
         }
+    }
+
+    public static boolean waitForElementVisibleWithRetry(By locator, int timeoutOfSeconds, int retryAttempts) {
+        int attempts = 0;
+        while (attempts < retryAttempts) {
+            try {
+                System.out.println("Menunggu elemen terlihat, percobaan ke-" + (attempts + 1));
+                WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeoutOfSeconds));
+                wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+                System.out.println("Elemen terlihat.");
+                return true;
+            } catch (Exception e) {
+                System.out.println("Error terjadi saat menunggu elemen terlihat dalam percobaan ke-" + (attempts + 1) + ": " + e.getMessage());
+            }
+            attempts++;
+        }
+        System.out.println("Elemen tidak ditemukan setelah " + retryAttempts + " percobaan.");
+        return false;
     }
 
 

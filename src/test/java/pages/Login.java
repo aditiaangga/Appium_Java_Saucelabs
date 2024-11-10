@@ -10,7 +10,7 @@ public class Login extends utils{
 //    AndroidDriver driver;
     public Login(AndroidDriver driver){this.driver = driver;}
 
-    public void login(String username, String password) throws InterruptedException {
+    public void login(String username, String password) {
 //        Thread.sleep(2000);
         driver.findElement(AppiumBy.accessibilityId("test-Username")).sendKeys(username);
         driver.findElement(AppiumBy.accessibilityId("test-Password")).sendKeys(password);
