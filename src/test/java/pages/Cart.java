@@ -32,7 +32,16 @@ public class Cart extends utils{
 
 
         By locator = AppiumBy.androidUIAutomator("new UiSelector().text(\"" + Product + "\")");
-        findElementWithSwipe(locator);
+//        findElementWithSwipe(locator);
+        try {
+            driver.findElement(AppiumBy.androidUIAutomator("new UiScrollable(new UiSelector()).scrollIntoView(text(\""+Product+"\"));"));
+        }
+        catch (NoSuchElementException e){
+            driver.findElement(AppiumBy.androidUIAutomator("new UiScrollable(new UiSelector().scrollable(true)).flingBackward().scrollIntoView(text(\""+Product+"\"));"));
+        }
+        ss.takeScreenshotWithResizedHeight("Find Product");
+        waitForElementVisibleWithRetry(locator, 5, 5);
+        driver.findElement(locator).click();
 
 //        waitToPresence(driver, (AppiumBy) AppiumBy.androidUIAutomator("new UiSelector().text(\"" + Product + "\")"));
 //        Thread.sleep(2000);
