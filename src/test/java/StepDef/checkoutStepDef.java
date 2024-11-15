@@ -72,6 +72,12 @@ public class checkoutStepDef {
         cart.addToCart(product);
     }
 
+    @When("User drag and drop to add cart product {string}")
+    public void userDragAndDropAddCartProduct(String product) throws InterruptedException {
+        Cart cart = new Cart(driver);
+        cart.dragAndDropAddToCart(product);
+    }
+
     @And("User checkout the cart")
     public void userCheckoutTheCart() throws InterruptedException {
         Checkout co = new Checkout(driver);

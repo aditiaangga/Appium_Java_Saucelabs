@@ -11,13 +11,6 @@ import io.cucumber.java.Scenario;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.nio.channels.SelectionKey;
 import java.time.Duration;
 import java.util.Arrays;
 
@@ -63,6 +56,31 @@ public class utils {
         int startX = width / 2;
         int startY = (int) (height * 0.85); // Mulai dari 85% dari tinggi layar
         int endY = (int) (height * 0.25);   // Berhenti di 25% dari tinggi layar
+
+        final var finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+        var start = new Point(startX, startY);
+        var end = new Point(startX, endY);
+        var swipe = new Sequence(finger, 1);
+        swipe.addAction(finger.createPointerMove(Duration.ofMillis(0),
+                PointerInput.Origin.viewport(), start.getX(), start.getY()));
+        swipe.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
+        swipe.addAction(finger.createPointerMove(Duration.ofMillis(500),
+                PointerInput.Origin.viewport(), end.getX(), end.getY()));
+        swipe.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+        driver.perform(Arrays.asList(swipe));
+
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
+    }
+
+    public static void swipeUpALitte() {
+        // Mendapatkan ukuran layar
+        int height = driver.manage().window().getSize().getHeight();
+        int width = driver.manage().window().getSize().getWidth();
+
+        // Koordinat untuk swipe
+        int startX = width / 2;
+        int startY = (int) (height * 0.85); // Mulai dari 85% dari tinggi layar
+        int endY = (int) (height * 0.70);   // Berhenti di 70% dari tinggi layar
 
         final var finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
         var start = new Point(startX, startY);

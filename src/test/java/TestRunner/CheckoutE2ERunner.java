@@ -15,6 +15,7 @@ import org.junit.runner.RunWith;
         "@success"
 //        "@problem"
 //        "@locked_out"
+//        "@drag_and_drop"
 )
 public class CheckoutE2ERunner {
 }
