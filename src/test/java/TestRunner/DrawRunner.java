@@ -5,17 +5,11 @@ import io.cucumber.junit.CucumberOptions;
 import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
-@CucumberOptions(features="src/test/resources/Features/checkoutE2E.feature",
+@CucumberOptions(features="src/test/resources/Features/draw.feature",
         glue= {"StepDef"},
         plugin ={"pretty","json:target/cucumber-result/json/cucumber.json"
                 , "html:target/cucumber-result/html/cucumber.html"
         }
-        ,tags =
-//        "@sort"
-        "@success"
-//        "@problem"
-//        "@locked_out"
-//        "@drag_and_drop"
 )
-public class CheckoutE2ERunner {
+public class DrawRunner {
 }

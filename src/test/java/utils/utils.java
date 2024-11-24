@@ -118,6 +118,41 @@ public class utils {
         driver.perform(Arrays.asList(swipe));
     }
 
+    public static void swipeToDraw(By locator,double percentageStartX, double percentageEndX, double percentageStartY, double percentageEndY) {
+        // Mendapatkan ukuran layar
+        int height = driver.manage().window().getSize().getHeight();
+        int width = driver.manage().window().getSize().getWidth();
+
+        //Mendapatkan ukuran element
+        int heightElement = driver.findElement(locator).getSize().getHeight();
+        int widthElement = driver.findElement(locator).getSize().getWidth();
+
+        //Mendapatkan location element
+        int xElement = driver.findElement(locator).getLocation().getX();
+        int yElement = driver.findElement(locator).getLocation().getY();
+
+
+        // Koordinat untuk swipe
+        int startX = (int) (xElement+(widthElement * percentageStartX));
+        int endX = (int) (xElement+(widthElement * percentageEndX));
+        int startY = (int) (yElement+(heightElement * percentageStartY));
+        int endY = (int) (yElement+(heightElement * percentageEndY));
+
+        final var finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+        var start = new Point(startX, startY);
+        var end = new Point(endX, endY);
+        var swipe = new Sequence(finger, 1);
+        swipe.addAction(finger.createPointerMove(Duration.ofMillis(0),
+                PointerInput.Origin.viewport(), start.getX(), start.getY()));
+        swipe.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
+        swipe.addAction(finger.createPointerMove(Duration.ofMillis(500),
+                PointerInput.Origin.viewport(), end.getX(), end.getY()));
+        swipe.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+        driver.perform(Arrays.asList(swipe));
+
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
+    }
+
     // Fungsi untuk mengecek apakah layar di bagian paling atas (ini asumsi saja, bisa disesuaikan)
     public static boolean isAtTop() {
         // Contoh logika: Jika kita swipe down dari atas layar dan tidak ada pergerakan,

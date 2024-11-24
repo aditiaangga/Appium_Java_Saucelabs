@@ -16,6 +16,7 @@ import org.openqa.selenium.WebElement;
 import pages.Cart;
 import pages.Checkout;
 import pages.Login;
+import pages.Menu;
 import utils.DriverManager;
 import utils.ScreenshotUtil;
 
@@ -76,6 +77,18 @@ public class checkoutStepDef {
     public void userDragAndDropAddCartProduct(String product) throws InterruptedException {
         Cart cart = new Cart(driver);
         cart.dragAndDropAddToCart(product);
+    }
+
+    @When("User Click Menu")
+    public void userClickMenu() throws InterruptedException {
+        Menu menu = new Menu(driver);
+        menu.clickMenu();
+    }
+
+    @And("User Click Drawing")
+    public void userClickDrawing() {
+        Menu menu = new Menu(driver);
+        menu.clickDrawing();
     }
 
     @And("User checkout the cart")
@@ -168,6 +181,7 @@ public class checkoutStepDef {
         }
         return false; // Jika cmd.exe tidak ditemukan, return false
     }
+
 
 
 }
