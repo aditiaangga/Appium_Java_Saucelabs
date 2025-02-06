@@ -11,15 +11,21 @@ pipeline {
 
            post {
                 always {
-                    archiveArtifacts artifacts: 'target/cucumber-result/**', fingerprint: true
-                    cucumber (
-                        buildStatus: 'UNSTABLE',
-                        reportTitle: 'Cucumber Report',
-                        fileIncludePattern: 'target/cucumber-result/*/*.json',
-                        mergeFeaturesWithRetest: true,
-                        skipEmptyJSONFiles: true
-                    )
-                }
+           		   archiveArtifacts artifacts: 'target/cucumber-result/**', fingerprint: true
+                   cucumber (  buildStatus: 'UNSTABLE',
+                               reportTitle: 'Cucumber Report Before Rerun',
+                               fileIncludePattern: 'target/cucumber-result/json/*.json',
+                               mergeFeaturesWithRetest: true,
+                               skipEmptyJSONFiles: true
+                               )
+                   cucumber (  buildStatus: 'FAILURE',
+                               reportTitle: 'Cucumber Report',
+                               fileIncludePattern: 'target/cucumber-result/*/*.json',
+                               mergeFeaturesWithRetest: true,
+                               skipEmptyJSONFiles: true
+                               )
+
+				}
             }
         }
     }
