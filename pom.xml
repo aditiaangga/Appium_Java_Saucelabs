@@ -104,6 +104,46 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- Surefire reports -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <useFile>false</useFile>
+                    <argLine>-Dfile.encoding=${project.build.sourceEncoding}</argLine>
+                    <testSourceDirectory>src/test/java</testSourceDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>test-runner</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>${runner.include}</include>
+                            </includes>
+                            <parallel>none</parallel>
+                            <forkCount>1</forkCount>
+                            <useUnlimitedThreads>true</useUnlimitedThreads>
+                        </configuration>
+                    </execution>
+                    <!--                    <execution>-->
+                    <!--                        <id>re-runner</id>-->
+                    <!--                        <phase>test</phase>-->
+                    <!--                        <goals>-->
+                    <!--                            <goal>test</goal>-->
+                    <!--                        </goals>-->
+                    <!--                        <configuration>-->
+                    <!--                            <includes>-->
+                    <!--                                <include>**/runner/rerun/ReRunner.java</include>-->
+                    <!--                            </includes>-->
+                    <!--                            <forkCount>1</forkCount>-->
+                    <!--                        </configuration>-->
+                    <!--                    </execution>-->
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
