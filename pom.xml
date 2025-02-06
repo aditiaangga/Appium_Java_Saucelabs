@@ -13,7 +13,7 @@
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.testSourceDirectory>src/test/java</project.build.testSourceDirectory>
-<!--        <runner.include>**/TestRunner/CheckoutE2ERunner.java</runner.include>-->
+        <runner.include>**/TestRunner/CheckoutE2ERunner.java</runner.include>
     </properties>
 
     <dependencies>
