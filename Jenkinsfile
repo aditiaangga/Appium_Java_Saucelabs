@@ -9,7 +9,7 @@ pipeline {
                 bat 'mvn clean test -Dtest=%runner%'
             }
 
-           ppost {
+           post {
                 always {
                     archiveArtifacts artifacts: 'target/cucumber-result/**', fingerprint: true
                     cucumber (
