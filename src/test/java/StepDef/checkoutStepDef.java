@@ -150,7 +150,7 @@ public class checkoutStepDef {
         try {
             // Menggunakan Runtime untuk membuka Command Prompt dengan perintah Appium
             // Cek apakah cmd.exe sudah berjalan
-            if (isCommandPromptRunning()) {
+            if (isAppiumRunning()) {
                 // Jika cmd.exe sudah ada, jalankan appium --allow-cors di cmd yang sudah terbuka
                 Runtime.getRuntime().exec("cmd.exe /c appium --allow-cors");
                 System.out.println("Appium --allow-cors command executed in existing Command Prompt.");
@@ -165,21 +165,24 @@ public class checkoutStepDef {
         Thread.sleep(5000);
     }
 
-    private static boolean isCommandPromptRunning() {
+
+    private static boolean isAppiumRunning() {
         try {
-            // Gunakan tasklist untuk memeriksa apakah cmd.exe sedang berjalan
+            // Menjalankan perintah "tasklist" untuk mendapatkan daftar proses yang berjalan
             Process process = Runtime.getRuntime().exec("tasklist");
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
+
             while ((line = reader.readLine()) != null) {
-                if (line.contains("cmd.exe")) {
-                    return true; // Jika cmd.exe ditemukan, return true
+                // Memeriksa apakah proses "node.exe" (Appium berjalan di Node.js) ada dalam daftar
+                if (line.contains("node.exe")) {
+                    return true;
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return false; // Jika cmd.exe tidak ditemukan, return false
+        return false; // Mengembalikan false jika Appium tidak ditemukan
     }
 
 

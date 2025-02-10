@@ -86,37 +86,22 @@ public class Hooks {
         if (driver != null) {
             driver.quit();
             DriverManager.quitDriver(); // Ensure to clear the driver instance.
-            stopAppium();
+//            stopAppium();
         }
     }
 
     // Fungsi untuk menghentikan server Appium
     public void stopAppium() throws AWTException, InterruptedException {
-        if (appiumProcess != null) {
-            appiumProcess.destroy(); // Menghentikan proses Appium
-            System.out.println("Appium server stopped.");
-        } else {
-            System.out.println("No Appium process is running.");
-        }
-        closeCommandPrompt();
-//        Thread.sleep(2000);
-    }
-
-    // Fungsi untuk menutup Command Prompt
-    public void closeCommandPrompt() throws AWTException {
         try {
-            Runtime.getRuntime().exec("taskkill /IM cmd.exe /F"); // Menutup semua jendela Command Prompt
-            System.out.println("Command Prompt closed.");
+            System.out.println("Stopping Appium...");
+            if (appiumProcess != null) {
+                appiumProcess.destroy();
+            }
+            Runtime.getRuntime().exec("taskkill /IM node.exe /F"); // Pastikan Appium benar-benar mati
+            System.out.println("Appium Server Stopped.");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void sendCtrlC() throws AWTException {
-        Robot robot = new Robot();
-        robot.keyPress(KeyEvent.VK_CONTROL);
-        robot.keyPress(KeyEvent.VK_C);
-        robot.keyRelease(KeyEvent.VK_C);
-        robot.keyRelease(KeyEvent.VK_CONTROL);
-    }
 }
