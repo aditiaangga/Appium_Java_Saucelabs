@@ -29,9 +29,9 @@ jobs:
           rm sdk-tools.zip
 
           yes | sdkmanager --licenses
-          yes | sdkmanager --install "platform-tools" "emulator" "platforms;android-30" "system-images;android-30;google_apis;x86_64"
+          yes | sdkmanager --install "platform-tools" "emulator" "platforms;android-30" "system-images;android-30;google_apis;arm64-v8a"
 
-          echo "no" | avdmanager create avd -n testAVD -k "system-images;android-30;google_apis;x86_64"
+          echo "no" | avdmanager create avd -n testAVD -k "system-images;android-30;google_apis;arm64-v8a"
 
       - name: Start Android Emulator
         run: |
