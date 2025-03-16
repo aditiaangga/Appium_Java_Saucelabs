@@ -36,6 +36,13 @@ jobs:
           yes | sdkmanager --licenses
           yes | sdkmanager --install "platform-tools" "emulator" "build-tools;30.0.3" "platforms;android-30" "system-images;android-30;google_apis;arm64-v8a"
 
+      - name: Verify Installed SDK Packages
+        run: |
+          export ANDROID_HOME=$HOME/Library/Android/sdk
+          export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:$PATH
+          
+          sdkmanager --list
+
       - name: Create AVD
         run: |
           export ANDROID_HOME=$HOME/Library/Android/sdk
