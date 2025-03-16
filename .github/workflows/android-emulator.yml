@@ -17,11 +17,10 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
-      - name: Install JDK 8 for avdmanager
+      - name: Install JAXB for Java 21
         run: |
-          brew install openjdk@8
-          echo 'export JAVA8_HOME="/usr/local/opt/openjdk@8"' >> $GITHUB_ENV
-          echo 'export PATH="$JAVA8_HOME/bin:$PATH"' >> $GITHUB_ENV
+          mkdir -p ~/.m2
+          echo '<settings><profiles><profile><id>jaxb</id><dependencies><dependency><groupId>org.glassfish.jaxb</groupId><artifactId>jaxb-runtime</artifactId><version>4.0.2</version></dependency></dependencies></profile></profiles><activeProfiles><activeProfile>jaxb</activeProfile></activeProfiles></settings>' > ~/.m2/settings.xml
 
       - name: Set up Android SDK
         run: |
@@ -35,18 +34,15 @@ jobs:
           rm sdk-tools.zip
 
           yes | sdkmanager --licenses
-          yes | sdkmanager --install "platform-tools" "emulator" "platforms;android-30" "system-images;android-30;google_apis;arm64-v8a"
+          yes | sdkmanager --install "platform-tools" "emulator" "build-tools;30.0.3" "platforms;android-30" "system-images;android-30;google_apis;arm64-v8a"
 
       - name: Create AVD
         run: |
           export ANDROID_HOME=$HOME/Library/Android/sdk
           export PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:$PATH
 
-          # Gunakan JDK 8 untuk avdmanager
-          $JAVA8_HOME/bin/java -version
-          
           echo "Creating AVD..."
-          echo "no" | $JAVA8_HOME/bin/java -jar $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd -n testAVD -k "system-images;android-30;google_apis;arm64-v8a" --device "pixel_3" --force
+          echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd -n testAVD -k "system-images;android-30;google_apis;arm64-v8a" --device "pixel_3" --force
 
       - name: Start Emulator
         run: |
