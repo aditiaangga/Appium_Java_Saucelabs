@@ -29,18 +29,12 @@ jobs:
           echo "Creating AVD..."
           echo "no" | avdmanager create avd -n test_avd -k "system-images;android-30;google_apis;x86_64" --device "pixel_4"
 
-      - name: Fix AVD Path
-        run: |
-          echo "Setting AVD path..."
-          export ANDROID_AVD_HOME=$HOME/.config/.android/avd
-
       - name: Verify AVD
         run: avdmanager list avd
 
-      - name: Start Emulator
+      - name: Start Emulator (Software Rendering)
         run: |
           echo "Starting emulator..."
-          export ANDROID_AVD_HOME=$HOME/.config/.android/avd
-          nohup $ANDROID_HOME/emulator/emulator -avd test_avd -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect &
-          sleep 30
+          nohup $ANDROID_HOME/emulator/emulator -avd test_avd -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -accel off &
+          sleep 60
           adb devices
