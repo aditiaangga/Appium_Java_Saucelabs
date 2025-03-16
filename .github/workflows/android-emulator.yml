@@ -43,8 +43,8 @@ jobs:
       - name: Start Emulator
         run: |
           export ANDROID_AVD_HOME=$HOME/.android/avd
-          nohup $ANDROID_HOME/emulator/emulator -avd test_avd -no-window -no-snapshot -gpu swiftshader_indirect -noaudio -no-boot-anim -accel off &
-          sleep 60
+          nohup $ANDROID_HOME/emulator/emulator -avd test_avd -no-window -no-snapshot -gpu swiftshader_indirect -noaudio -no-boot-anim -accel off -qemu -cpu cortex-a57 &
+          sleep 90
           adb wait-for-device
           adb shell getprop sys.boot_completed | grep -m 1 "1"
 
