@@ -1,79 +1,29 @@
-name: Android Tests on macOS
+name: Android Tests
 
 on:
   workflow_dispatch:
 
 jobs:
   android-test:
-    runs-on: macos-latest
-
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Set up JDK 21
+      - name: Setup Java
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '21'
 
-      - name: Install JAXB for Java 21
+      - name: Install dependencies
         run: |
-          mkdir -p ~/.m2
-          echo '<settings><profiles><profile><id>jaxb</id><dependencies><dependency><groupId>org.glassfish.jaxb</groupId><artifactId>jaxb-runtime</artifactId><version>4.0.2</version></dependency></dependencies></profile></profiles><activeProfiles><activeProfile>jaxb</activeProfile></activeProfiles></settings>' > ~/.m2/settings.xml
+          sudo apt-get update
+          sudo apt-get install -y adb wget unzip
 
-      - name: Set up Android SDK
-        run: |
-          export ANDROID_HOME=$HOME/Library/Android/sdk
-          export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:$PATH
-
-          mkdir -p $ANDROID_HOME/cmdline-tools
-          curl -o sdk-tools.zip https://dl.google.com/android/repository/commandlinetools-mac-8512546_latest.zip
-          unzip sdk-tools.zip -d $ANDROID_HOME/cmdline-tools
-          mv $ANDROID_HOME/cmdline-tools/cmdline-tools $ANDROID_HOME/cmdline-tools/latest
-          rm sdk-tools.zip
-
-          yes || true | sdkmanager --licenses
-          yes || true | sdkmanager --install "platform-tools" "emulator" "platforms;android-30" "system-images;android-30;google_apis;arm64-v8a"
-
-      - name: Verify Installed SDK Packages
-        run: |
-          export ANDROID_HOME=$HOME/Library/Android/sdk
-          export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:$PATH
-          
-          sdkmanager --list
-
-      - name: Create AVD
-        run: |
-          export ANDROID_HOME=$HOME/Library/Android/sdk
-          export PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:$PATH
-
-          echo "Creating AVD..."
-          echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd -n testAVD -k "system-images;android-30;google_apis;arm64-v8a" --device "pixel_3" --force
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
 
       - name: Start Emulator
         run: |
-          export ANDROID_HOME=$HOME/Library/Android/sdk
-          export PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:$PATH
-
-          echo "Starting Emulator..."
-          nohup $ANDROID_HOME/emulator/emulator -avd testAVD -no-window -noaudio -no-boot-anim -gpu swiftshader_indirect -accel off -no-snapshot -no-snapstorage -qemu -cpu cortex-a72 &
-          
-          echo "Waiting for emulator to start..."
+          echo "Starting emulator..."
+          nohup $ANDROID_HOME/emulator/emulator -avd emulator -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect &
           adb wait-for-device
           adb devices
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
-      - name: Install Appium
-        run: npm install -g appium
-
-      - name: Start Appium Server
-        run: |
-          nohup appium &
-
-      - name: Run Tests
-        run: mvn clean test
