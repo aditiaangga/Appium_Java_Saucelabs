@@ -15,6 +15,9 @@ jobs:
           npm install -g appium
           appium -v
 
+      - name: List available simulators
+        run: xcrun simctl list devices
+
       - name: Start iOS Simulator
         run: |
           xcrun simctl boot "iPhone 14"
