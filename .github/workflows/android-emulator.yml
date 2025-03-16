@@ -27,6 +27,8 @@ jobs:
       - name: Create AVD
         run: |
           echo "no" | avdmanager create avd -n test_avd -k "system-images;android-30;google_apis;x86_64" --device "pixel_4"
+          ls -lah $HOME/.android/avd/
+          cat $HOME/.android/avd/test_avd.ini || echo "AVD ini file not found"
 
       - name: Start Emulator
         run: |
