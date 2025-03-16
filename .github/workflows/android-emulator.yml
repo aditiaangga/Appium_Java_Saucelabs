@@ -1,0 +1,47 @@
+name: Android Tests
+
+on:
+  workflow_dispatch: # Bisa dijalankan secara manual
+
+jobs:
+  android-test:
+    runs-on: macos-latest # Bisa diganti dengan windows-latest jika perlu
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Install Android SDK
+        run: |
+          echo "y" | sdkmanager --install "system-images;android-30;default;x86_64"
+          echo "y" | sdkmanager --install "platform-tools" "platforms;android-30" "emulator"
+          echo "no" | avdmanager create avd -n testAVD -k "system-images;android-30;default;x86_64"
+
+      - name: Start Android Emulator
+        run: |
+          nohup emulator -avd testAVD -no-window -noaudio -no-boot-anim -gpu swiftshader_indirect &
+          adb wait-for-device
+
+      - name: Verify Emulator is Running
+        run: adb devices
+
+      - name: Set up Maven
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Run Appium Server
+        run: |
+          npm install -g appium
+          appium --version
+          nohup appium &
+
+      - name: Run Tests
+        run: mvn clean test
