@@ -17,6 +17,12 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
+      - name: Install JDK 8 for avdmanager
+        run: |
+          brew install openjdk@8
+          echo 'export JAVA8_HOME="/usr/local/opt/openjdk@8"' >> $GITHUB_ENV
+          echo 'export PATH="$JAVA8_HOME/bin:$PATH"' >> $GITHUB_ENV
+
       - name: Set up Android SDK
         run: |
           export ANDROID_HOME=$HOME/Library/Android/sdk
@@ -31,25 +37,28 @@ jobs:
           yes | sdkmanager --licenses
           yes | sdkmanager --install "platform-tools" "emulator" "platforms;android-30" "system-images;android-30;google_apis;arm64-v8a"
 
-          echo "no" | avdmanager create avd -n testAVD -k "system-images;android-30;google_apis;arm64-v8a"
-
-      - name: Create and Start Emulator
+      - name: Create AVD
         run: |
           export ANDROID_HOME=$HOME/Library/Android/sdk
           export PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:$PATH
+
+          # Gunakan JDK 8 untuk avdmanager
+          $JAVA8_HOME/bin/java -version
           
-          # Create AVD if not exists
           echo "Creating AVD..."
-          echo "no" | $ANDROID_HOME/tools/bin/avdmanager create avd -n testAVD -k "system-images;android-30;google_apis;arm64-v8a" --device "pixel_3" --force
+          echo "no" | $JAVA8_HOME/bin/java -jar $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd -n testAVD -k "system-images;android-30;google_apis;arm64-v8a" --device "pixel_3" --force
 
-          # Start Emulator without -cpu
+      - name: Start Emulator
+        run: |
+          export ANDROID_HOME=$HOME/Library/Android/sdk
+          export PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:$PATH
+
           echo "Starting Emulator..."
-          nohup $ANDROID_HOME/emulator/emulator -avd testAVD -no-window -noaudio -no-boot-anim -gpu swiftshader_indirect -accel off -verbose &
+          nohup $ANDROID_HOME/emulator/emulator -avd testAVD -no-window -noaudio -no-boot-anim -gpu swiftshader_indirect -accel auto &
+
+          echo "Waiting for emulator to start..."
           adb wait-for-device
-
-
-      - name: Verify Emulator is Running
-        run: adb devices
+          adb devices
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
