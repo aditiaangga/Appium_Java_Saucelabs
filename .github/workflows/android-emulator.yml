@@ -33,13 +33,20 @@ jobs:
 
           echo "no" | avdmanager create avd -n testAVD -k "system-images;android-30;google_apis;arm64-v8a"
 
-      - name: Start Android Emulator (ARM64)
+      - name: Create and Start Emulator
         run: |
           export ANDROID_HOME=$HOME/Library/Android/sdk
           export PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:$PATH
           
-          nohup $ANDROID_HOME/emulator/emulator -avd testAVD -no-window -noaudio -no-boot-anim -gpu swiftshader_indirect -accel off -cpu cortex-a53 -verbose &
+          # Create AVD if not exists
+          echo "Creating AVD..."
+          echo "no" | $ANDROID_HOME/tools/bin/avdmanager create avd -n testAVD -k "system-images;android-30;google_apis;arm64-v8a" --device "pixel_3" --force
+
+          # Start Emulator without -cpu
+          echo "Starting Emulator..."
+          nohup $ANDROID_HOME/emulator/emulator -avd testAVD -no-window -noaudio -no-boot-anim -gpu swiftshader_indirect -accel off -verbose &
           adb wait-for-device
+
 
       - name: Verify Emulator is Running
         run: adb devices
