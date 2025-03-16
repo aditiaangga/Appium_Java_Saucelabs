@@ -33,8 +33,8 @@ jobs:
           mv $ANDROID_HOME/cmdline-tools/cmdline-tools $ANDROID_HOME/cmdline-tools/latest
           rm sdk-tools.zip
 
-          yes | sdkmanager --licenses
-          yes | sdkmanager --install "platform-tools" "emulator" "build-tools;30.0.3" "platforms;android-30" "system-images;android-30;google_apis;arm64-v8a"
+          yes || true | sdkmanager --licenses
+          yes || true | sdkmanager --install "platform-tools" "emulator" "platforms;android-30" "system-images;android-30;google_apis;arm64-v8a"
 
       - name: Verify Installed SDK Packages
         run: |
