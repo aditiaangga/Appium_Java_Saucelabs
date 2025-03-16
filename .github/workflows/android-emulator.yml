@@ -24,29 +24,21 @@ jobs:
           sdkmanager --install "system-images;android-30;google_apis;x86_64"
           sdkmanager --licenses
 
-      - name: Set AVD Path
-        run: |
-          echo "Setting AVD path..."
-          export ANDROID_AVD_HOME=$ANDROID_HOME/.android/avd
-          mkdir -p $ANDROID_AVD_HOME
-
       - name: Create AVD
         run: |
-          echo "Creating AVD..."
-          export ANDROID_AVD_HOME=$ANDROID_HOME/.android/avd
-          echo "no" | avdmanager create avd -n test_avd -k "system-images;android-30;google_apis;x86_64" --device "pixel_4" -p $ANDROID_AVD_HOME/test_avd.avd
+          echo "no" | avdmanager create avd -n test_avd -k "system-images;android-30;google_apis;x86_64" --device "pixel_4"
 
       - name: Verify AVD
         run: |
-          echo "Checking AVD list..."
           avdmanager list avd
-          echo "Checking AVD folder contents..."
-          ls -lah $ANDROID_AVD_HOME
+          ls -lah $ANDROID_HOME/.android/avd
 
       - name: Start Emulator
         run: |
-          echo "Starting emulator..."
-          export ANDROID_AVD_HOME=$ANDROID_HOME/.android/avd
           nohup $ANDROID_HOME/emulator/emulator -avd test_avd -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -accel off &
           sleep 60
-          adb devices
+          adb wait-for-device
+          adb shell getprop sys.boot_completed | grep -m 1 "1"
+
+      - name: Verify Emulator is Running
+        run: adb devices
