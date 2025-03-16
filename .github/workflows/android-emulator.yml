@@ -3,7 +3,7 @@ name: Android Emulator with Appium
 on: [workflow_dispatch]
 
 jobs:
-  android-emulator:
+  android-emulator: 
     runs-on: ubuntu-latest
 
     steps:
