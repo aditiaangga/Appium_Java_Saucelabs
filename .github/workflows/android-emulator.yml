@@ -1,17 +1,14 @@
-name: Android Tests
+name: Android Emulator with Appium
 
-on:
-  workflow_dispatch:
+on: [workflow_dispatch] # Dapat dijalankan secara manual
 
 jobs:
-  android-test:
+  android-emulator:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Setup Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '21'
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
       - name: Install dependencies
         run: |
@@ -21,9 +18,45 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Create AVD
+        run: |
+          echo "y" | sdkmanager --install "system-images;android-30;google_apis;x86_64"
+          echo "no" | avdmanager create avd -n test_avd -k "system-images;android-30;google_apis;x86_64" --device "pixel_4"
+
       - name: Start Emulator
         run: |
           echo "Starting emulator..."
-          nohup $ANDROID_HOME/emulator/emulator -avd emulator -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect &
-          adb wait-for-device
+          nohup $ANDROID_HOME/emulator/emulator -avd test_avd -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect &
+          sleep 30
           adb devices
+
+      - name: Check Emulator
+        run: adb shell getprop ro.build.version.release
+
+      - name: Install Node.js and Appium
+        run: |
+          curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+          sudo apt-get install -y nodejs
+          npm install -g appium@next
+          appium -v
+
+      - name: Start Appium Server
+        run: |
+          echo "Starting Appium server..."
+          nohup appium --allow-cors &
+          sleep 5
+          curl http://localhost:4723/wd/hub/status
+
+      - name: Install Ngrok
+        run: |
+          wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-stable-linux-amd64.zip
+          unzip ngrok-stable-linux-amd64.zip
+          chmod +x ngrok
+          sudo mv ngrok /usr/local/bin/
+
+      - name: Start Ngrok Tunnel
+        run: |
+          echo "Starting Ngrok..."
+          nohup ngrok http 4723 --log=stdout > ngrok.log &
+          sleep 5
+          curl -s http://localhost:4040/api/tunnels | jq -r '.tunnels[0].public_url'
