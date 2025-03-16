@@ -13,7 +13,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y adb wget unzip
+          sudo apt-get install -y adb wget unzip libvirt-daemon libvirt-daemon-system qemu-kvm bridge-utils
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
@@ -24,21 +24,9 @@ jobs:
           sdkmanager --install "system-images;android-30;google_apis;x86_64"
           sdkmanager --licenses
 
-      - name: Set AVD Path
-        run: |
-          export ANDROID_AVD_HOME=$HOME/.android/avd
-          mkdir -p $ANDROID_AVD_HOME
-
       - name: Create AVD
         run: |
-          export ANDROID_AVD_HOME=$HOME/.android/avd
           echo "no" | avdmanager create avd -n test_avd -k "system-images;android-30;google_apis;x86_64" --device "pixel_4"
-
-      - name: Verify AVD
-        run: |
-          export ANDROID_AVD_HOME=$HOME/.android/avd
-          avdmanager list avd
-          ls -lah $ANDROID_AVD_HOME
 
       - name: Start Emulator
         run: |
@@ -47,7 +35,6 @@ jobs:
           sleep 90
           adb wait-for-device
           adb shell getprop sys.boot_completed | grep -m 1 "1"
-
-
+          
       - name: Verify Emulator is Running
         run: adb devices
