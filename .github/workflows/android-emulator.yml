@@ -24,17 +24,25 @@ jobs:
           sdkmanager --install "system-images;android-30;google_apis;x86_64"
           sdkmanager --licenses
 
+      - name: Set AVD Path
+        run: |
+          export ANDROID_AVD_HOME=$HOME/.android/avd
+          mkdir -p $ANDROID_AVD_HOME
+
       - name: Create AVD
         run: |
+          export ANDROID_AVD_HOME=$HOME/.android/avd
           echo "no" | avdmanager create avd -n test_avd -k "system-images;android-30;google_apis;x86_64" --device "pixel_4"
 
       - name: Verify AVD
         run: |
+          export ANDROID_AVD_HOME=$HOME/.android/avd
           avdmanager list avd
-          ls -lah $ANDROID_HOME/.android/avd
+          ls -lah $ANDROID_AVD_HOME
 
       - name: Start Emulator
         run: |
+          export ANDROID_AVD_HOME=$HOME/.android/avd
           nohup $ANDROID_HOME/emulator/emulator -avd test_avd -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -accel off &
           sleep 60
           adb wait-for-device
