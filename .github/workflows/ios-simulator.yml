@@ -26,7 +26,7 @@ jobs:
       - name: Install & Run ngrok
         run: |
           brew install ngrok/ngrok/ngrok
-          ngrok authtoken your_ngrok_auth_token
+          ngrok authtoken 2szG7W6hTKx1SL37QX4ScuAo5IA_3PBBVuS2tPYJhoN9EqLoU
           ngrok http 4723 &
 
       - name: Start Appium Server
