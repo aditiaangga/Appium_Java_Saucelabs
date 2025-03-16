@@ -40,3 +40,4 @@ jobs:
           
       - name: Verify Emulator is Running
         run: adb devices
+ 
