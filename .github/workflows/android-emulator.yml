@@ -17,10 +17,13 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
-      - name: Install Android SDK
+      - name: Set up Android SDK
         run: |
-          echo "y" | sdkmanager --install "system-images;android-30;default;x86_64"
-          echo "y" | sdkmanager --install "platform-tools" "platforms;android-30" "emulator"
+          export ANDROID_HOME=$HOME/Library/Android/sdk
+          export PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$PATH
+          mkdir -p $ANDROID_HOME
+          yes | sudo $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
+          yes | sdkmanager --install "platform-tools" "platforms;android-30" "emulator" "system-images;android-30;default;x86_64"
           echo "no" | avdmanager create avd -n testAVD -k "system-images;android-30;default;x86_64"
 
       - name: Start Android Emulator
