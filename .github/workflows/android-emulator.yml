@@ -1,30 +1,38 @@
-name: Android Tests
+name: Android Tests on macOS
 
 on:
-  workflow_dispatch: # Bisa dijalankan secara manual
+  workflow_dispatch:
 
 jobs:
   android-test:
-    runs-on: macos-latest # Bisa diganti dengan windows-latest jika perlu
+    runs-on: macos-latest
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set up JDK
+      # 🔹 Gunakan Java 8 untuk `sdkmanager`
+      - name: Set up JDK 8 (for sdkmanager)
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '21'
+          java-version: '8'
 
       - name: Set up Android SDK
         run: |
           export ANDROID_HOME=$HOME/Library/Android/sdk
           export PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$PATH
           mkdir -p $ANDROID_HOME
-          yes | sudo $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
           yes | sdkmanager --install "platform-tools" "platforms;android-30" "emulator" "system-images;android-30;default;x86_64"
           echo "no" | avdmanager create avd -n testAVD -k "system-images;android-30;default;x86_64"
+
+      # 🔹 Kembali ke Java 21 untuk menjalankan tes
+      - name: Set up JDK 21 (for tests)
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
 
       - name: Start Android Emulator
         run: |
@@ -34,16 +42,16 @@ jobs:
       - name: Verify Emulator is Running
         run: adb devices
 
-      - name: Set up Maven
-        uses: actions/setup-java@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
         with:
-          distribution: 'temurin'
-          java-version: '21'
+          node-version: '18'
 
-      - name: Run Appium Server
+      - name: Install Appium
+        run: npm install -g appium
+
+      - name: Start Appium Server
         run: |
-          npm install -g appium
-          appium --version
           nohup appium &
 
       - name: Run Tests
