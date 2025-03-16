@@ -50,8 +50,8 @@ jobs:
           export PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:$PATH
 
           echo "Starting Emulator..."
-          nohup $ANDROID_HOME/emulator/emulator -avd testAVD -no-window -noaudio -no-boot-anim -gpu swiftshader_indirect -accel auto &
-
+          nohup $ANDROID_HOME/emulator/emulator -avd testAVD -no-window -noaudio -no-boot-anim -gpu swiftshader_indirect -accel off -qemu -cpu cortex-a72 &
+          
           echo "Waiting for emulator to start..."
           adb wait-for-device
           adb devices
