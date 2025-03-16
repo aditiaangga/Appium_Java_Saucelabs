@@ -20,7 +20,7 @@ jobs:
 
       - name: Start iOS Simulator
         run: |
-          xcrun simctl boot "iPhone 14"
+          xcrun simctl boot "iPhone 16 Pro"
           xcrun simctl list devices booted
 
       - name: Install & Run ngrok
