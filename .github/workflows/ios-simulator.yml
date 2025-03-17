@@ -25,17 +25,27 @@ jobs:
 
       - name: Start Appium Server
         run: |
-          appium --log appium.log --allow-cors &
+          appium --address 127.0.0.1 --port 4723 --allow-cors &
           sleep 10  # Tunggu Appium siap
 
-      - name: Create Serveo Tunnel for Appium
+      - name: Install & Start ngrok
         run: |
-          ssh -o "StrictHostKeyChecking=no" -R 4723:localhost:4723 serveo.net &
-          sleep 5  # Beri waktu untuk Serveo terhubung
+          brew install ngrok/ngrok/ngrok
+          ngrok authtoken 2szG7W6hTKx1SL37QX4ScuAo5IA_3PBBVuS2tPYJhoN9EqLoU
+          ngrok http 4723 > /dev/null &  # Jalankan di background
+          sleep 5  # Beri waktu untuk ngrok startup
 
-      - name: Wait for Serveo Tunnel & Print URL
+      - name: Get ngrok Public URL
         run: |
-          echo "Serveo tunnel is ready. Use this in Appium Inspector:"
-          echo "Host: serveo.net"
-          echo "Port: 4723"
-          sleep 60
+          while true; do
+            NGROK_URL=$(curl -s http://127.0.0.1:4040/api/tunnels | jq -r '.tunnels[0].public_url')
+            if [[ "$NGROK_URL" == http* ]]; then
+              echo "Ngrok is ready: $NGROK_URL"
+              echo "Use this in Appium Inspector:"
+              echo "Remote Server: $NGROK_URL/wd/hub"
+              break
+            fi
+            echo "Waiting for ngrok..."
+            sleep 5
+          done
+          sleep 60  # Tunggu tambahan 60 detik setelah ngrok siap
