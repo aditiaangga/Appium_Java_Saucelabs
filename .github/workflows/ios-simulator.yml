@@ -32,6 +32,7 @@ jobs:
       - name: Start Appium Server
         run: |
           appium --log appium.log --allow-cors &
+          sleep 10
 
       - name: Wait for ngrok & Validate URL
         run: |
