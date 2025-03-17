@@ -31,7 +31,8 @@ jobs:
           git clone https://github.com/appium/appium-inspector.git
           cd appium-inspector
           npm install
-          npm start &  # Gunakan `npm start` bukan `npm run dev`
+          npm run build  # Build Appium Inspector Web
+          npm run start:electron &  # Jalankan dengan Electron
 
       - name: Install & Run ngrok for Appium Inspector
         run: |
