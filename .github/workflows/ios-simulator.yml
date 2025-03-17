@@ -31,7 +31,7 @@ jobs:
           git clone https://github.com/appium/appium-inspector.git
           cd appium-inspector
           npm install
-          npm run dev &
+          npm start &  # Gunakan `npm start` bukan `npm run dev`
 
       - name: Install & Run ngrok for Appium Inspector
         run: |
