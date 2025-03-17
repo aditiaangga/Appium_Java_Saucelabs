@@ -33,7 +33,15 @@ jobs:
         run: |
           appium --log appium.log --allow-cors &
 
-      - name: Display ngrok URL
+      - name: Wait for ngrok & Validate URL
         run: |
-          curl -s http://127.0.0.1:4040/api/tunnels | jq '.tunnels[0].public_url'
-          sleep 60
+          while true; do
+           NGROK_URL=$(curl -s http://127.0.0.1:4040/api/tunnels | jq -r '.tunnels[0].public_url')
+           if [[ "$NGROK_URL" == http* ]]; then
+            echo "ngrok is ready: $NGROK_URL"
+            break
+           fi
+           echo "Waiting for ngrok..."
+           sleep 5
+          done
+          sleep 60  # Tunggu tambahan 60 detik setelah ngrok siap
