@@ -23,26 +23,19 @@ jobs:
           xcrun simctl boot "iPhone 16 Pro"
           xcrun simctl list devices booted
 
-      - name: Install & Run ngrok
-        run: |
-          brew install ngrok/ngrok/ngrok
-          ngrok authtoken 2szG7W6hTKx1SL37QX4ScuAo5IA_3PBBVuS2tPYJhoN9EqLoU
-          ngrok tcp 4723 &
-
       - name: Start Appium Server
         run: |
           appium --log appium.log --allow-cors &
-          sleep 10
+          sleep 10  # Tunggu Appium siap
 
-      - name: Wait for ngrok & Validate URL
+      - name: Create Serveo Tunnel for Appium
         run: |
-          while true; do
-           NGROK_URL=$(curl -s http://127.0.0.1:4040/api/tunnels | jq -r '.tunnels[0].public_url')
-           if [[ "$NGROK_URL" == tcp* ]]; then
-            echo "ngrok is ready: $NGROK_URL"
-            break
-           fi
-           echo "Waiting for ngrok..."
-           sleep 5
-          done
-          sleep 60  # Tunggu tambahan 60 detik setelah ngrok siap
+          ssh -o "StrictHostKeyChecking=no" -R 4723:localhost:4723 serveo.net &
+          sleep 5  # Beri waktu untuk Serveo terhubung
+
+      - name: Wait for Serveo Tunnel & Print URL
+        run: |
+          echo "Serveo tunnel is ready. Use this in Appium Inspector:"
+          echo "Host: serveo.net"
+          echo "Port: 4723"
+          sleep 60
