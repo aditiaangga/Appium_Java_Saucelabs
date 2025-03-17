@@ -32,7 +32,8 @@ jobs:
           cd appium-inspector
           npm install
           npm run build  # Build Appium Inspector Web
-          npm run start:electron &  # Jalankan dengan Electron
+          npm run dev:electron &  # Menjalankan Inspector dengan Electron
+
 
       - name: Install & Run ngrok for Appium Inspector
         run: |
