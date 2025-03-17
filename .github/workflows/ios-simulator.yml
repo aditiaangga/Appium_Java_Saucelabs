@@ -23,19 +23,20 @@ jobs:
           xcrun simctl boot "iPhone 16 Pro"
           xcrun simctl list devices booted
 
-      - name: Start Appium Server
+      - name: Clone Appium Inspector Web
         run: |
-          appium --log appium.log --allow-cors &
-          sleep 10  # Tunggu Appium siap
+          git clone https://github.com/appium/appium-inspector.git
+          cd appium-inspector
+          npm install
 
       - name: Update Vite Config to Allow Ngrok
         run: |
+          mkdir -p appium-inspector  # Pastikan folder ada
           echo "export default { server: { host: '0.0.0.0', port: 5173, strictPort: true, allowedHosts: ['*'] } };" > appium-inspector/vite.config.js
 
       - name: Start Appium Inspector Web
         run: |
           cd appium-inspector
-          npm install
           npm run dev -- --host &
           sleep 10
 
