@@ -36,7 +36,7 @@ jobs:
       - name: Start Appium Inspector Web
         run: |
           cd appium-inspector
-          npm start &
+          npm run dev:web &
           sleep 10
 
       - name: Expose Appium Inspector Web via ngrok
