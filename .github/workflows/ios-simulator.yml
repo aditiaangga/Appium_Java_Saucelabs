@@ -11,7 +11,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          brew install node tmux
+          brew install node
           npm install -g appium
           appium -v
 
@@ -24,31 +24,24 @@ jobs:
           xcrun simctl list devices booted
 
       - name: Start Appium Server in Background
-        run: |
-          tmux new-session -d -s appium "appium --log appium.log --allow-cors"
+        run: appium --log appium.log --allow-cors &
 
       - name: Clone & Start Appium Inspector Web
         run: |
           git clone https://github.com/appium/appium-inspector.git
           cd appium-inspector
           npm install
-          tmux new-session -d -s inspector "npm run dev"
-
-      - name: Install & Run ngrok for Appium Server
-        run: |
-          brew install ngrok/ngrok/ngrok
-          ngrok authtoken 2szG7W6hTKx1SL37QX4ScuAo5IA_3PBBVuS2tPYJhoN9EqLoU
-          tmux new-session -d -s ngrok_appium "ngrok http 4723"
+          npm run dev &
 
       - name: Install & Run ngrok for Appium Inspector
         run: |
-          tmux new-session -d -s ngrok_inspector "ngrok http 3000"
+          brew install ngrok/ngrok/ngrok
+          ngrok authtoken 2szG7W6hTKx1SL37QX4ScuAo5IA_3PBBVuS2tPYJhoN9EqLoU
+          ngrok http 3000 &
 
-      - name: Wait for ngrok & Display Public URLs
+      - name: Wait for ngrok & Display Public URL
         run: |
           sleep 10
-          NGROK_APPIUM_URL=$(curl -s http://127.0.0.1:4040/api/tunnels | jq -r '.tunnels[0].public_url')
           NGROK_INSPECTOR_URL=$(curl -s http://127.0.0.1:4040/api/tunnels | jq -r '.tunnels[0].public_url')
-          echo "Appium Server is available at: $NGROK_APPIUM_URL"
           echo "Appium Inspector is available at: $NGROK_INSPECTOR_URL"
           sleep 60  # Beri waktu untuk akses manual
