@@ -27,7 +27,7 @@ jobs:
         run: |
           brew install ngrok/ngrok/ngrok
           ngrok authtoken 2szG7W6hTKx1SL37QX4ScuAo5IA_3PBBVuS2tPYJhoN9EqLoU
-          ngrok http --hostname=normal-hamster-typically.ngrok-free.app 4723 &
+          ngrok tcp 4723 &
 
       - name: Start Appium Server
         run: |
@@ -38,7 +38,7 @@ jobs:
         run: |
           while true; do
            NGROK_URL=$(curl -s http://127.0.0.1:4040/api/tunnels | jq -r '.tunnels[0].public_url')
-           if [[ "$NGROK_URL" == http* ]]; then
+           if [[ "$NGROK_URL" == tcp* ]]; then
             echo "ngrok is ready: $NGROK_URL"
             break
            fi
