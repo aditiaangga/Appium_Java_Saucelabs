@@ -23,27 +23,37 @@ jobs:
           xcrun simctl boot "iPhone 16 Pro"
           xcrun simctl list devices booted
 
-      - name: Start Appium Server in Background
-        run: appium --log appium.log --allow-cors &
-
-      - name: Clone & Start Appium Inspector Web
+      - name: Start Appium Server
         run: |
-          git clone https://github.com/appium/appium-inspector.git
+          appium --log appium.log --allow-cors &
+          sleep 10  # Tunggu Appium siap
+
+      - name: Update Vite Config to Allow Ngrok
+        run: |
+          echo "export default { server: { host: '0.0.0.0', port: 5173, strictPort: true, allowedHosts: ['*'] } };" > appium-inspector/vite.config.js
+
+      - name: Start Appium Inspector Web
+        run: |
           cd appium-inspector
           npm install
-          npm run build  # Build Appium Inspector Web
-          npm run dev:electron &  # Menjalankan Inspector dengan Electron
-
-
-      - name: Install & Run ngrok for Appium Inspector
-        run: |
-          brew install ngrok/ngrok/ngrok
-          ngrok authtoken 2szG7W6hTKx1SL37QX4ScuAo5IA_3PBBVuS2tPYJhoN9EqLoU
-          ngrok http 5173 &
-
-      - name: Wait for ngrok & Display Public URL
-        run: |
+          npm run dev -- --host &
           sleep 10
-          NGROK_INSPECTOR_URL=$(curl -s http://127.0.0.1:4040/api/tunnels | jq -r '.tunnels[0].public_url')
-          echo "Appium Inspector is available at: $NGROK_INSPECTOR_URL"
-          sleep 60  # Beri waktu untuk akses manual
+
+      - name: Expose Appium Inspector Web via ngrok
+        run: |
+          ngrok authtoken 2szG7W6hTKx1SL37QX4ScuAo5IA_3PBBVuS2tPYJhoN9EqLoU
+          ngrok http 5173 --host-header="localhost:5173" &
+          sleep 10
+
+      - name: Get ngrok Public URL
+        run: |
+          while true; do
+           NGROK_URL=$(curl -s http://127.0.0.1:4040/api/tunnels | jq -r '.tunnels[0].public_url')
+           if [[ "$NGROK_URL" == http* ]]; then
+            echo "ngrok is ready: $NGROK_URL"
+            break
+           fi
+           echo "Waiting for ngrok..."
+           sleep 5
+          done
+          echo "Appium Inspector Web can be accessed at: $NGROK_URL"
