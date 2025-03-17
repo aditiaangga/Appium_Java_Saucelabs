@@ -11,7 +11,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          brew install node
+          brew install node tmux
           npm install -g appium
           appium -v
 
@@ -23,29 +23,32 @@ jobs:
           xcrun simctl boot "iPhone 16 Pro"
           xcrun simctl list devices booted
 
-      - name: Start Appium Server
+      - name: Start Appium Server in Background
         run: |
-          appium --address 127.0.0.1 --port 4723 --allow-cors &
-          sleep 10  # Tunggu Appium siap
+          tmux new-session -d -s appium "appium --log appium.log --allow-cors"
 
-      - name: Install & Start ngrok
+      - name: Clone & Start Appium Inspector Web
+        run: |
+          git clone https://github.com/appium/appium-inspector.git
+          cd appium-inspector
+          npm install
+          tmux new-session -d -s inspector "npm run dev"
+
+      - name: Install & Run ngrok for Appium Server
         run: |
           brew install ngrok/ngrok/ngrok
           ngrok authtoken 2szG7W6hTKx1SL37QX4ScuAo5IA_3PBBVuS2tPYJhoN9EqLoU
-          ngrok http 4723 > /dev/null &  # Jalankan di background
-          sleep 5  # Beri waktu untuk ngrok startup
+          tmux new-session -d -s ngrok_appium "ngrok http 4723"
 
-      - name: Get ngrok Public URL
+      - name: Install & Run ngrok for Appium Inspector
         run: |
-          while true; do
-            NGROK_URL=$(curl -s http://127.0.0.1:4040/api/tunnels | jq -r '.tunnels[0].public_url')
-            if [[ "$NGROK_URL" == http* ]]; then
-              echo "Ngrok is ready: $NGROK_URL"
-              echo "Use this in Appium Inspector:"
-              echo "Remote Server: $NGROK_URL/wd/hub"
-              break
-            fi
-            echo "Waiting for ngrok..."
-            sleep 5
-          done
-          sleep 60  # Tunggu tambahan 60 detik setelah ngrok siap
+          tmux new-session -d -s ngrok_inspector "ngrok http 3000"
+
+      - name: Wait for ngrok & Display Public URLs
+        run: |
+          sleep 10
+          NGROK_APPIUM_URL=$(curl -s http://127.0.0.1:4040/api/tunnels | jq -r '.tunnels[0].public_url')
+          NGROK_INSPECTOR_URL=$(curl -s http://127.0.0.1:4040/api/tunnels | jq -r '.tunnels[0].public_url')
+          echo "Appium Server is available at: $NGROK_APPIUM_URL"
+          echo "Appium Inspector is available at: $NGROK_INSPECTOR_URL"
+          sleep 60  # Beri waktu untuk akses manual
