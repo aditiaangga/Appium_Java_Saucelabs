@@ -41,7 +41,7 @@ jobs:
 
       - name: Expose Appium Inspector Web via ngrok
         run: |
-          ngrok authtoken 2szG7W6hTKx1SL37QX4ScuAo5IA_3PBBVuS2tPYJhoN9EqLoU
+          ngrok config add-authtoken 2szG7W6hTKx1SL37QX4ScuAo5IA_3PBBVuS2tPYJhoN9EqLoU
           ngrok http 5173 &
           sleep 10
 
