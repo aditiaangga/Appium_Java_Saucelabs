@@ -31,7 +31,7 @@ jobs:
 
       - name: Update Vite Config to Allow Ngrok
         run: |
-          echo "export default { server: { host: '0.0.0.0', port: 5173, strictPort: true, allowedHosts: ['*'] } };" > appium-inspector/vite.config.mjs
+          echo "export default { server: { host: '0.0.0.0', port: 5173, strictPort: true, allowedHosts: ['normal-hamster-typically.ngrok-free.app'] } };" > appium-inspector/vite.config.mjs
 
       - name: Start Appium Inspector Web
         run: |
@@ -50,7 +50,7 @@ jobs:
         run: |
           set -e
           ngrok config add-authtoken 2szG7W6hTKx1SL37QX4ScuAo5IA_3PBBVuS2tPYJhoN9EqLoU
-          ngrok http 5173 > /dev/null 2>&1 & disown
+          ngrok http --url=normal-hamster-typically.ngrok-free.app 5173 > /dev/null 2>&1 & disown
           echo "Starting ngrok..."
           sleep 10
       
