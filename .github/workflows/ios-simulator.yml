@@ -14,6 +14,7 @@ jobs:
           brew install node
           npm install -g appium
           appium -v
+          appium driver install xcuitest
 
       # - name: List available simulators
       #   run: xcrun simctl list devices
