@@ -38,6 +38,7 @@ jobs:
       - name: Start Appium Server
         run: |
           appium --allow-cors > appium.log 2>&1 & disown
+          ps aux | grep appium
 
       - name: Install ngrok on macOS
         if: runner.os == 'macOS'
