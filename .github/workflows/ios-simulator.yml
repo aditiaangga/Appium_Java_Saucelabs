@@ -25,16 +25,16 @@ jobs:
 
       - name: Clone Appium Inspector Web
         run: |
-          git clone https://github.com/appium/appium-inspector.git
+          git clone https://github.com/aditiaangga/appium_inspector_public.git
           cd appium-inspector
           npm install
 
-      - name: Modify vite.config.mjs to allow ngrok
-        run: |
-          sed -i '' 's|export default defineConfig({|export default defineConfig({\
-            server: {\
-              allowedHosts: ["normal-hamster-typically.ngrok-free.app"]\
-            },|' vite.config.mjs
+      # - name: Modify vite.config.mjs to allow ngrok
+      #   run: |
+      #     sed -i '' 's|export default defineConfig({|export default defineConfig({\
+      #       server: {\
+      #         allowedHosts: ["normal-hamster-typically.ngrok-free.app"]\
+      #       },|' vite.config.mjs
 
       - name: Start Appium Inspector Web
         run: |
