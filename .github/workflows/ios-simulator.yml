@@ -31,12 +31,12 @@ jobs:
 
       - name: Update Vite Config to Allow Ngrok
         run: |
-          echo "export default { server: { host: '0.0.0.0', port: 5173, strictPort: true, allowedHosts: ['*'] } };" > appium-inspector/vite.config.js
+          echo "export default { server: { host: '0.0.0.0', port: 5173, strictPort: true, allowedHosts: ['*'] } };" > appium-inspector/vite.config.mjs
 
       - name: Start Appium Inspector Web
         run: |
           cd appium-inspector
-          npm run dev:electron &
+          npm run dev:browser &
           sleep 10
 
       - name: Expose Appium Inspector Web via ngrok
@@ -57,3 +57,4 @@ jobs:
            sleep 5
           done
           echo "Appium Inspector Web can be accessed at: $NGROK_URL"
+          sleep 100
