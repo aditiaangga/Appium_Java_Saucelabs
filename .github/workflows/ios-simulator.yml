@@ -26,7 +26,7 @@ jobs:
       - name: Clone Appium Inspector Web
         run: |
           git clone https://github.com/aditiaangga/appium_inspector_public.git
-          cd appium-inspector
+          cd appium_inspector_public
           npm install
 
       # - name: Modify vite.config.mjs to allow ngrok
