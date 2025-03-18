@@ -42,6 +42,9 @@ jobs:
           ps aux | grep appium
           curl -v http://127.0.0.1:4723/wd/hub/status
           appium driver list --installed
+          xcode-select --print-path
+          which xcodebuild
+          xcodebuild -version
 
 
       - name: Install ngrok on macOS
