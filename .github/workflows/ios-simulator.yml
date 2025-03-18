@@ -39,6 +39,7 @@ jobs:
         run: |
           appium --allow-cors > appium.log 2>&1 & disown
           ps aux | grep appium
+          curl -v http://127.0.0.1:4723/wd/hub/status
 
       - name: Install ngrok on macOS
         if: runner.os == 'macOS'
