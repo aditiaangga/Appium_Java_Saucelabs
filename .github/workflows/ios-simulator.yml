@@ -18,10 +18,10 @@ jobs:
       # - name: List available simulators
       #   run: xcrun simctl list devices
 
-      # - name: Start iOS Simulator
-      #   run: |
-      #     xcrun simctl boot "iPhone 16 Pro"
-      #     xcrun simctl list devices booted
+      - name: Start iOS Simulator
+        run: |
+          xcrun simctl boot "iPhone 16 Pro"
+          xcrun simctl list devices booted
 
       - name: Clone Appium Inspector Web
         run: |
@@ -29,17 +29,14 @@ jobs:
           cd appium-inspector
           npm install
 
-      # - name: Modify vite.config.mjs to allow ngrok
-      #   run: |
-      #     sed -i '' 's|export default defineConfig({|export default defineConfig({\
-      #       server: {\
-      #         allowedHosts: ["normal-hamster-typically.ngrok-free.app"]\
-      #       },|' vite.config.mjs
-
       - name: Start Appium Inspector Web
         run: |
           cd appium-inspector
           npm run dev:browser &
+
+      - name: Start Appium Server
+        run: |
+          appium --allow-cors &
 
       - name: Install ngrok on macOS
         if: runner.os == 'macOS'
