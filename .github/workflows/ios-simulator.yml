@@ -65,4 +65,4 @@ jobs:
             echo "Waiting for ngrok..."
             sleep 5
           done
-          sleep 100
+          sleep 1000
