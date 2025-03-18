@@ -31,7 +31,7 @@ jobs:
 
       - name: Modify vite.config.mjs to allow ngrok
         run: |
-          sed -i 's|export default defineConfig({|export default defineConfig({\
+          sed -i '' 's|export default defineConfig({|export default defineConfig({\
             server: {\
               allowedHosts: ["normal-hamster-typically.ngrok-free.app"]\
             },|' vite.config.mjs
