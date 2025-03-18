@@ -38,14 +38,6 @@ jobs:
       - name: Start Appium Server
         run: |
           appium --allow-cors &
-          sleep 10
-          ps aux | grep appium
-          curl -v http://127.0.0.1:4723/wd/hub/status
-          appium driver list --installed
-          xcode-select --print-path
-          which xcodebuild
-          xcodebuild -version
-
 
       - name: Install ngrok on macOS
         if: runner.os == 'macOS'
@@ -74,4 +66,16 @@ jobs:
             echo "Waiting for ngrok..."
             sleep 5
           done
+          
+      - name: Check Appium Server
+        run: |
+          ps aux | grep appium
+          curl -v http://127.0.0.1:4723/wd/hub/status
+          appium driver list --installed
+          xcode-select --print-path
+          which xcodebuild
+          xcodebuild -version
+      
+      - name: Access to Ngrok
+        run: |
           sleep 1000
