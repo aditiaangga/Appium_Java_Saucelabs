@@ -41,6 +41,8 @@ jobs:
           sleep 10
           ps aux | grep appium
           curl -v http://127.0.0.1:4723/wd/hub/status
+          appium driver list --installed
+
 
       - name: Install ngrok on macOS
         if: runner.os == 'macOS'
