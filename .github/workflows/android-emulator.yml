@@ -42,7 +42,7 @@ jobs:
 
       - name: Start Emulator
         run: |
-          /usr/local/lib/android/sdk/emulator/emulator -avd testAVD -no-window -noaudio -no-boot-anim -gpu swiftshader_indirect &
+          /usr/local/lib/android/sdk/emulator/emulator -avd testAVD -no-window -noaudio -no-boot-anim -gpu swiftshader_indirect -no-accel &
           adb wait-for-device
           adb shell input keyevent 82
 
