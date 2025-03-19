@@ -40,6 +40,14 @@ jobs:
         run: |
           echo "ANDROID_AVD_HOME=/home/runner/.config/.android/avd" >> $GITHUB_ENV
 
+      - name: Fix ADB Key Issue
+        run: |
+          echo "Fixing ADB key permissions..."
+          mkdir -p ~/.android
+          touch ~/.android/adbkey
+          touch ~/.android/adbkey.pub
+          chmod 600 ~/.android/adbkey ~/.android/adbkey.pub
+
       - name: Start Emulator
         run: |
           /usr/local/lib/android/sdk/emulator/emulator -avd testAVD -no-window -noaudio -no-boot-anim -gpu swiftshader_indirect -no-accel -no-snapshot &
