@@ -36,11 +36,15 @@ jobs:
         run: |
           avdmanager list avd
 
+      - name: Set AVD Environment Variables
+        run: |
+          echo "ANDROID_AVD_HOME=/home/runner/.config/.android/avd" >> $GITHUB_ENV
+
       - name: Start Emulator
         run: |
-        #  /usr/local/lib/android/sdk/emulator/emulator -avd testAVD -no-window -noaudio -no-boot-anim -gpu swiftshader_indirect &
-        #  adb wait-for-device
-        #  adb shell input keyevent 82
+          /usr/local/lib/android/sdk/emulator/emulator -avd testAVD -no-window -noaudio -no-boot-anim -gpu swiftshader_indirect &
+          adb wait-for-device
+          adb shell input keyevent 82
 
       # - name: Run Appium Tests
       #   run: mvn clean test
