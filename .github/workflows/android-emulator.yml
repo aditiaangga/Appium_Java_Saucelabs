@@ -47,13 +47,27 @@ jobs:
           adb wait-for-device
           
           echo "Checking boot completion..."
-          timeout 600s sh -c 'while [[ $(adb shell getprop sys.boot_completed) != "1" ]]; do sleep 5; done'
-          
+          timeout 600s sh -c 'until [ "$(adb shell getprop sys.boot_completed)" = "1" ]; do sleep 5; done'
+               
           echo "Device is ready!"
-          echo "Disabling keyguard..."
-          adb shell wm dismiss-keyguard || echo "No keyguard to dismiss"
-          adb shell settings put secure lockscreen.disabled true
-
+          
+      - name: Disable Keyguard
+        run: |
+          echo "Checking if 'window' service exists..."
+          if adb shell service list | grep -q 'window'; then
+            echo "Disabling keyguard..."
+            adb shell wm dismiss-keyguard || echo "No keyguard to dismiss"
+          else
+            echo "'window' service not available, skipping keyguard disable..."
+          fi
+          
+          echo "Checking if 'settings' service exists..."
+          if adb shell service list | grep -q 'settings'; then
+            echo "Disabling lock screen..."
+            adb shell settings put secure lockscreen.disabled true
+          else
+            echo "'settings' service not available, skipping lock screen disable..."
+          fi
       - name: Run UI Tests
         run: |
           echo "Running UI Tests..."
