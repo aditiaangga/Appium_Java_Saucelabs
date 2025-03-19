@@ -59,23 +59,26 @@ jobs:
                
           echo "Device is ready!"
           
-      - name: Disable Keyguard
+
+
+      - name: Disable Keyguard and Lock Screen
         run: |
           echo "Checking if 'window' service exists..."
           if adb shell service list | grep -q 'window'; then
-            echo "Disabling keyguard..."
-            adb shell wm dismiss-keyguard || echo "No keyguard to dismiss"
+           echo "Disabling keyguard..."
+           adb shell wm dismiss-keyguard
           else
-            echo "'window' service not available, skipping keyguard disable..."
+           echo "'window' service not found, skipping keyguard disable."
           fi
-          
+
           echo "Checking if 'settings' service exists..."
           if adb shell service list | grep -q 'settings'; then
-            echo "Disabling lock screen..."
-            adb shell settings put secure lockscreen.disabled true
+           echo "Disabling lock screen..."
+           adb shell settings put global stay_on_while_plugged_in 3
           else
-            echo "'settings' service not available, skipping lock screen disable..."
+           echo "'settings' service not found, skipping lock screen disable."
           fi
+
       - name: Run UI Tests
         run: |
           echo "Running UI Tests..."
