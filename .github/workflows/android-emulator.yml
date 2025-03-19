@@ -42,9 +42,9 @@ jobs:
 
       - name: Start Emulator
         run: |
-          /usr/local/lib/android/sdk/emulator/emulator -avd testAVD -no-window -noaudio -no-boot-anim -gpu swiftshader_indirect -no-accel &
-          sleep 60
+          /usr/local/lib/android/sdk/emulator/emulator -avd testAVD -no-window -noaudio -no-boot-anim -gpu swiftshader_indirect -no-accel -no-snapshot &
           adb wait-for-device
+          timeout 600s sh -c 'until adb shell getprop sys.boot_completed | grep -m 1 "1"; do sleep 5; done'
           adb shell input keyevent 82
 
       # - name: Run Appium Tests
