@@ -1,43 +1,35 @@
-name: Android Emulator with Appium
+name: Android Tests
 
-on: [workflow_dispatch]
+on:
+  workflow_dispatch:
 
 jobs:
-  android-emulator: 
+  test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y adb wget unzip libvirt-daemon libvirt-daemon-system qemu-kvm bridge-utils
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
 
-      - name: Setup Android SDK
+      - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Install Android System Image
+      - name: Install Emulator
         run: |
-          sdkmanager --install "platform-tools" "platforms;android-30"
           sdkmanager --install "system-images;android-30;google_apis;x86_64"
-          sdkmanager --licenses
-
-      - name: Create AVD
-        run: |
-          echo "no" | avdmanager create avd -n test_avd -k "system-images;android-30;google_apis;x86_64" --device "pixel_4"
-          ls -lah $HOME/.android/avd/
-          cat $HOME/.android/avd/test_avd.ini || echo "AVD ini file not found"
+          avdmanager create avd -n testAVD -k "system-images;android-30;google_apis;x86_64" --device "pixel"
 
       - name: Start Emulator
         run: |
-          export ANDROID_AVD_HOME=$HOME/.android/avd
-          nohup $ANDROID_HOME/emulator/emulator -avd test_avd -no-window -no-snapshot -gpu swiftshader_indirect -noaudio -no-boot-anim -accel off &
-          sleep 90
+          nohup emulator -avd testAVD -no-window -noaudio -no-boot-anim -gpu swiftshader_indirect &
           adb wait-for-device
-          adb shell getprop sys.boot_completed | grep -m 1 "1"
-          
-      - name: Verify Emulator is Running
-        run: adb devices
- 
+          adb shell input keyevent 82
+
+      # - name: Run Appium Tests
+      #   run: mvn clean test
