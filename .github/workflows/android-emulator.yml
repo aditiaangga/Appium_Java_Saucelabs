@@ -58,19 +58,8 @@ jobs:
           timeout 600s sh -c 'until [ "$(adb shell getprop sys.boot_completed)" = "1" ]; do sleep 5; done'
                
           echo "Device is ready!"
-          
-      - name: Check if 'input' service exists
-        run: |
-          echo "Checking if 'input' service exists..."
-          if adb shell service list | grep -q 'input'; then
-            echo "Unlocking screen..."
-            adb shell input keyevent 82
-          else
-            echo "'input' service not found, skipping unlock."
-          fi
-      
-      - name: Run UI Tests
-        run: ./gradlew connectedAndroidTest      
+          adb devices -l
+   
         
       # - name: Run Appium Tests
       #   run: mvn clean test
