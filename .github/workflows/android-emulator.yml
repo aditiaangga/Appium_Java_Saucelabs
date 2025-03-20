@@ -63,8 +63,23 @@ jobs:
       - name: Run Appium Server
         run: |
           npm install -g appium
+          appium driver install uiautomator2
           appium --allow-cors > appium.log 2>&1 &
-          sleep 10
+          sleep 30
         
       - name: Run Appium Tests
-        run: mvn clean test
+        run: mvn clean verify
+
+      - name: Upload Cucumber Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cucumber-report
+          path: target/cucumber-html-reports
+
+      - name: Upload Generated Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-artifacts
+          path: target
