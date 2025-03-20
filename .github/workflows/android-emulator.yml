@@ -59,31 +59,18 @@ jobs:
                
           echo "Device is ready!"
           
-
-
-      - name: Disable Keyguard and Lock Screen
+      - name: Check if 'input' service exists
         run: |
-          echo "Checking if 'window' service exists..."
-          if adb shell service list | grep -q 'window'; then
-           echo "Disabling keyguard..."
-           adb shell wm dismiss-keyguard
+          echo "Checking if 'input' service exists..."
+          if adb shell service list | grep -q 'input'; then
+            echo "Unlocking screen..."
+            adb shell input keyevent 82
           else
-           echo "'window' service not found, skipping keyguard disable."
+            echo "'input' service not found, skipping unlock."
           fi
-
-          echo "Checking if 'settings' service exists..."
-          if adb shell service list | grep -q 'settings'; then
-           echo "Disabling lock screen..."
-           adb shell settings put global stay_on_while_plugged_in 3
-          else
-           echo "'settings' service not found, skipping lock screen disable."
-          fi
-
-      - name: Run UI Tests
-        run: |
-          echo "Running UI Tests..."
-          adb shell input keyevent 82
-          ./gradlew connectedAndroidTest
       
+      - name: Run UI Tests
+        run: ./gradlew connectedAndroidTest      
+        
       # - name: Run Appium Tests
       #   run: mvn clean test
