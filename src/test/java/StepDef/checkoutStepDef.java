@@ -38,7 +38,7 @@ public class checkoutStepDef {
 
     @Given("User use Device {string} and Open the Apps Saucelabs")
     public void userUseDeviceAndOpenTheAppsSaucelabs(String device) throws InterruptedException, MalformedURLException {
-        openCommandPromptWithAppium();
+        // openCommandPromptWithAppium();
 
         UiAutomator2Options options = getDeviceOptions(device);
         System.out.println("Selected device options: " + options.toString());
@@ -146,44 +146,44 @@ public class checkoutStepDef {
     }
 
     // Fungsi untuk membuka Command Prompt dan menjalankan perintah Appium
-    public static void openCommandPromptWithAppium() throws InterruptedException {
-        try {
-            // Menggunakan Runtime untuk membuka Command Prompt dengan perintah Appium
-            // Cek apakah cmd.exe sudah berjalan
-            if (isAppiumRunning()) {
-                // Jika cmd.exe sudah ada, jalankan appium --allow-cors di cmd yang sudah terbuka
-                Runtime.getRuntime().exec("cmd.exe /c appium --allow-cors");
-                System.out.println("Appium --allow-cors command executed in existing Command Prompt.");
-            } else {
-                // Jika belum ada cmd.exe, buka baru dan jalankan appium --allow-cors
-                Runtime.getRuntime().exec("cmd.exe /c start cmd.exe /k appium --allow-cors");
-                System.out.println("Command Prompt opened and Appium server started with --allow-cors.");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Thread.sleep(5000);
-    }
+    // public static void openCommandPromptWithAppium() throws InterruptedException {
+    //     try {
+    //         // Menggunakan Runtime untuk membuka Command Prompt dengan perintah Appium
+    //         // Cek apakah cmd.exe sudah berjalan
+    //         if (isAppiumRunning()) {
+    //             // Jika cmd.exe sudah ada, jalankan appium --allow-cors di cmd yang sudah terbuka
+    //             Runtime.getRuntime().exec("cmd.exe /c appium --allow-cors");
+    //             System.out.println("Appium --allow-cors command executed in existing Command Prompt.");
+    //         } else {
+    //             // Jika belum ada cmd.exe, buka baru dan jalankan appium --allow-cors
+    //             Runtime.getRuntime().exec("cmd.exe /c start cmd.exe /k appium --allow-cors");
+    //             System.out.println("Command Prompt opened and Appium server started with --allow-cors.");
+    //         }
+    //     } catch (IOException e) {
+    //         e.printStackTrace();
+    //     }
+    //     Thread.sleep(5000);
+    // }
 
 
-    private static boolean isAppiumRunning() {
-        try {
-            // Menjalankan perintah "tasklist" untuk mendapatkan daftar proses yang berjalan
-            Process process = Runtime.getRuntime().exec("tasklist");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
+    // private static boolean isAppiumRunning() {
+    //     try {
+    //         // Menjalankan perintah "tasklist" untuk mendapatkan daftar proses yang berjalan
+    //         Process process = Runtime.getRuntime().exec("tasklist");
+    //         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+    //         String line;
 
-            while ((line = reader.readLine()) != null) {
-                // Memeriksa apakah proses "node.exe" (Appium berjalan di Node.js) ada dalam daftar
-                if (line.contains("node.exe")) {
-                    return true;
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false; // Mengembalikan false jika Appium tidak ditemukan
-    }
+    //         while ((line = reader.readLine()) != null) {
+    //             // Memeriksa apakah proses "node.exe" (Appium berjalan di Node.js) ada dalam daftar
+    //             if (line.contains("node.exe")) {
+    //                 return true;
+    //             }
+    //         }
+    //     } catch (IOException e) {
+    //         e.printStackTrace();
+    //     }
+    //     return false; // Mengembalikan false jika Appium tidak ditemukan
+    // }
 
 
 
