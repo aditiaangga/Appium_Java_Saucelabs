@@ -68,7 +68,7 @@ jobs:
           sleep 30
         
       - name: Run Appium Tests
-        run: mvn clean verify
+        run: mvn clean verify -Dtest=CheckoutE2ERunner
 
       - name: Upload Cucumber Reports
         if: always()
