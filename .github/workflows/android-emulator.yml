@@ -22,7 +22,7 @@ jobs:
 
       - name: Install Emulator
         run: |
-          sdkmanager --install "system-images;android-30;google_apis_playstore;x86_64"
+          sdkmanager --install "system-images;android-30;google_apis;x86_64"
           avdmanager create avd -n testAVD -k "system-images;android-30;google_apis_playstore;x86_64" --device "pixel_4"
 
       - name: Check Emulator Path
