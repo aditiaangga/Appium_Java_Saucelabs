@@ -1,0 +1,75 @@
+name: Android Tests (Windows)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Emulator
+        shell: pwsh
+        run: |
+          & "$env:ANDROID_HOME\cmdline-tools\latest\bin\sdkmanager.bat" --install "system-images;android-30;google_apis;x86_64"
+          & "$env:ANDROID_HOME\cmdline-tools\latest\bin\avdmanager.bat" create avd -n testAVD -k "system-images;android-30;google_apis;x86_64" --device "pixel"
+
+      - name: Start Emulator
+        shell: pwsh
+        run: |
+          Start-Process -NoNewWindow -FilePath "$env:ANDROID_HOME\emulator\emulator.exe" -ArgumentList "-avd testAVD -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -no-snapshot"
+          echo "Waiting for device..."
+          & "$env:ANDROID_HOME\platform-tools\adb.exe" wait-for-device
+
+          echo "Checking boot completion..."
+          $timeout = New-TimeSpan -Seconds 600
+          $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+          do {
+            Start-Sleep -Seconds 5
+            $bootCompleted = & "$env:ANDROID_HOME\platform-tools\adb.exe" shell getprop sys.boot_completed
+          } while ($bootCompleted -ne "1" -and $stopwatch.Elapsed -lt $timeout)
+
+          echo "Device is ready!"
+          & "$env:ANDROID_HOME\platform-tools\adb.exe" devices -l
+
+      - name: Install Appium & UIAutomator2 Driver
+        shell: pwsh
+        run: |
+          npm install -g appium
+          appium driver install uiautomator2
+
+      - name: Start Appium Server
+        shell: pwsh
+        run: |
+          Start-Process -NoNewWindow -FilePath "appium" -ArgumentList "--allow-cors" -RedirectStandardOutput "appium.log"
+          Start-Sleep -Seconds 30
+
+      - name: Run Appium Tests
+        shell: pwsh
+        run: mvn clean verify -Dtest=CheckoutE2ERunner
+
+      - name: Upload Cucumber Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cucumber-report
+          path: target/cucumber-html-reports
+
+      - name: Upload Generated Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-artifacts
+          path: target
