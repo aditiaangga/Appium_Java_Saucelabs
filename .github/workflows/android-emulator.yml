@@ -60,6 +60,11 @@ jobs:
           echo "Device is ready!"
           adb devices -l
    
+      - name: Run Appium Server
+        run: |
+          npm install -g appium
+          appium --allow-cors > appium.log 2>&1 &
+          sleep 10
         
-      # - name: Run Appium Tests
-      #   run: mvn clean test
+      - name: Run Appium Tests
+        run: mvn clean test
