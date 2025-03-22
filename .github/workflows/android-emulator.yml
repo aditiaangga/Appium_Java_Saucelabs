@@ -22,9 +22,8 @@ jobs:
 
       - name: Install Emulator
         run: |
-          sdkmanager --install "system-images;android-30;google_apis;arm64-v8a"
-          avdmanager create avd -n testAVD -k "system-images;android-30;google_apis;arm64-v8a" --device "pixel_4"
-
+          sdkmanager --install "system-images;android-30;google_apis;x86_64"
+          avdmanager create avd -n testAVD -k "system-images;android-30;google_apis;x86_64" --device "pixel_4"
       - name: Check Emulator Path
         run: |
           echo "Android Home: $ANDROID_HOME"
@@ -47,6 +46,8 @@ jobs:
           touch ~/.android/adbkey
           touch ~/.android/adbkey.pub
           chmod 600 ~/.android/adbkey ~/.android/adbkey.pub
+          avdmanager list device
+
 
       - name: Start Emulator
         run: |
