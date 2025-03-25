@@ -17,8 +17,8 @@ jobs:
           appium driver install xcuitest
           appium plugin install --source=npm appium-inspector-plugin
 
-      # - name: List available simulators
-      #   run: xcrun simctl list devices
+      - name: List available simulators
+        run: xcrun simctl list devices
 
       - name: Start iOS Simulator
         run: |
