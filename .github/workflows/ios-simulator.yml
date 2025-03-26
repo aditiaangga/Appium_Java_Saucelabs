@@ -50,6 +50,8 @@ jobs:
       - name: Download Sample iOS App
         run: |
           curl -L -o ~/Downloads/sample-app.ipa "https://github.com/saucelabs/sample-app-mobile/releases/download/2.7.1/iOS.RealDevice.SauceLabs.Mobile.Sample.app.2.7.1.ipa"
+          echo $HOME/Downloads/sample-app.ipa
+
 
       - name: Expose Appium Server via ngrok
         run: |
