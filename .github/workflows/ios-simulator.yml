@@ -73,6 +73,8 @@ jobs:
         run: |
           xcrun simctl install "$UDID" ~/Downloads/extracted_app/iOS.Simulator.SauceLabs.Mobile.Sample.app.2.7.0.app
           xcrun simctl listapps booted | grep saucelabs
+          xcrun simctl launch booted com.saucelabs.SwagLabsMobileApp
+
       
       - name: Expose Appium Server via ngrok
         run: |
