@@ -72,6 +72,7 @@ jobs:
       - name: Install App on iOS Simulator
         run: |
           xcrun simctl install "$UDID" ~/Downloads/extracted_app/iOS.Simulator.SauceLabs.Mobile.Sample.app.2.7.0.app
+          xcrun simctl listapps booted | grep saucelabs
       
       - name: Expose Appium Server via ngrok
         run: |
