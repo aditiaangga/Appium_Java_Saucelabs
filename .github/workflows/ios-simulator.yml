@@ -54,9 +54,9 @@ jobs:
       - name: Extract ZIP
         run: |
           echo "Extract ZIP"
-          unzip sample-app.zip -d extracted_app
+          unzip ~/Downloads/sample-app.zip -d ~/Downloads/extracted_app
           echo "Cek hasil extract"
-          ls -R extracted_app  # Cek isi folder hasil ekstrak
+          ls -R ~/Downloads/extracted_app  # Cek isi folder hasil ekstrak
           echo $HOME/Downloads/extracted_app/iOS.Simulator.SauceLabs.Mobile.Sample.app.2.7.0.app
 
       - name: Expose Appium Server via ngrok
