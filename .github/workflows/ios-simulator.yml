@@ -47,11 +47,20 @@ jobs:
           echo "Installing ngrok on macOS..."
           brew install ngrok
 
-      - name: Download Sample iOS App
+      - name: Download ZIP File
         run: |
-          curl -L -o ~/Downloads/sample-app.ipa "https://github.com/saucelabs/sample-app-mobile/releases/download/2.7.1/iOS.RealDevice.SauceLabs.Mobile.Sample.app.2.7.1.ipa"
-          echo $HOME/Downloads/sample-app.ipa
+          curl -L -o sample-app.zip "https://github.com/saucelabs/sample-app-mobile/releases/download/2.7.0/iOS.Simulator.SauceLabs.Mobile.Sample.app.2.7.0.zip"
 
+      - name: Extract ZIP
+        run: |
+          unzip sample-app.zip -d extracted_app
+          ls -R extracted_app  # Cek isi folder hasil ekstrak
+
+      - name: Move to Downloads
+        run: |
+          mv extracted_app/iOS.Simulator.SauceLabs.Mobile.Sample.app.2.7.1.app ~/Downloads/sample-app.app
+          echo "App moved to ~/Downloads/sample-app.app"
+          echo $HOME/Downloads/sample-app.ipa
 
       - name: Expose Appium Server via ngrok
         run: |
