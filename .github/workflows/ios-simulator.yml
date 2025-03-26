@@ -24,6 +24,16 @@ jobs:
         run: |
           xcrun simctl boot "iPhone 16 Pro"
           xcrun simctl list devices booted
+      
+      - name: Ambil UDID iPhone 16 Pro yang Booted
+        run: |
+          UDID=$(xcrun simctl list devices | grep "iPhone 16 Pro" | grep "(Booted)" | awk -F '[()]' '{print $2}')
+          if [ -z "$UDID" ]; then
+            echo "❌ Tidak menemukan UDID iPhone 16 Pro yang Booted!"
+            exit 1
+          fi
+          echo "✅ UDID ditemukan: $UDID"
+          echo "UDID=$UDID" >> $GITHUB_ENV
 
      # - name: Clone Appium Inspector Web
      #   run: |
@@ -58,7 +68,11 @@ jobs:
           echo "Cek hasil extract"
           ls -R ~/Downloads/extracted_app  # Cek isi folder hasil ekstrak
           echo $HOME/Downloads/extracted_app/iOS.Simulator.SauceLabs.Mobile.Sample.app.2.7.0.app
-
+      
+      - name: Install App on iOS Simulator
+        run: |
+          xcrun simctl install "$UDID" ~/Downloads/extracted_app/iOS.Simulator.SauceLabs.Mobile.Sample.app.2.7.0.app
+      
       - name: Expose Appium Server via ngrok
         run: |
           set -e
