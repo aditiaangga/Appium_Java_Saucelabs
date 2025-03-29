@@ -79,7 +79,7 @@ jobs:
       - name: Expose Appium Server via ngrok
         run: |
           set -e
-          ngrok config add-authtoken 2szG7W6hTKx1SL37QX4ScuAo5IA_3PBBVuS2tPYJhoN9EqLoU
+          ngrok config add-authtoken ${{ secrets.NGROK_AUTH_TOKEN }}
           ngrok http --url=normal-hamster-typically.ngrok-free.app --host-header=rewrite 4723 > /dev/null 2>&1 & disown
           echo "Starting ngrok..."
       
