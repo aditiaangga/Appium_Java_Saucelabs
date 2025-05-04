@@ -67,13 +67,14 @@ jobs:
           unzip ~/Downloads/sample-app.zip -d ~/Downloads/extracted_app
           echo "Cek hasil extract"
           ls -R ~/Downloads/extracted_app  # Cek isi folder hasil ekstrak
-          echo $HOME/Downloads/extracted_app/iOS.Simulator.SauceLabs.Mobile.Sample.app.2.7.0.app
+          echo $HOME/Downloads/extracted_app/TheApp.app
       
       - name: Install App on iOS Simulator
         run: |
-          xcrun simctl install "$UDID" ~/Downloads/extracted_app/iOS.Simulator.SauceLabs.Mobile.Sample.app.2.7.0.app
-          xcrun simctl listapps booted | grep saucelabs
-          xcrun simctl launch booted com.saucelabs.SwagLabsMobileApp
+          xcrun simctl install "$UDID" ~/Downloads/extracted_app/TheApp.app
+          xcrun simctl listapps booted
+          # xcrun simctl listapps booted | grep saucelabs
+          # xcrun simctl launch booted com.saucelabs.SwagLabsMobileApp
 
       
       - name: Expose Appium Server via ngrok
