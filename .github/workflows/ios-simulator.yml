@@ -59,7 +59,7 @@ jobs:
 
       - name: Download ZIP File
         run: |
-          curl -L -o ~/Downloads/sample-app.zip "https://github.com/saucelabs/sample-app-mobile/releases/download/2.7.0/iOS.Simulator.SauceLabs.Mobile.Sample.app.2.7.0.zip"
+          curl -L -o ~/Downloads/sample-app.zip "https://github.com/appium/appium/blob/master/packages/appium/sample-code/apps/TestApp.app.zip"
 
       - name: Extract ZIP
         run: |
