@@ -1,0 +1,19 @@
+name: Screenshot macOS
+
+on:
+  workflow_dispatch:
+
+jobs:
+  mac-screenshot:
+    runs-on: macos-latest
+    steps:
+    - name: Take Screenshot
+      run: |
+        mkdir screen
+        screencapture screen/screenshot.png
+
+    - name: Upload Screenshot
+      uses: actions/upload-artifact@v4
+      with:
+        name: macos-screenshot
+        path: screen/screenshot.png
