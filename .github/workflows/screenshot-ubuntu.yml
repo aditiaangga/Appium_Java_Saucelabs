@@ -1,4 +1,4 @@
-name: Screenshot Ubuntu
+name: Ubuntu Screenshot with Xvfb
 
 on:
   workflow_dispatch:
@@ -7,13 +7,18 @@ jobs:
   ubuntu-screenshot:
     runs-on: ubuntu-latest
     steps:
-    - name: Install scrot
-      run: sudo apt-get update && sudo apt-get install -y scrot
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y scrot xvfb
 
-    - name: Take Screenshot
+    - name: Start virtual display and take screenshot
       run: |
         mkdir screen
-        DISPLAY=:0 scrot screen/screenshot.png
+        Xvfb :99 -screen 0 1024x768x24 &
+        export DISPLAY=:99
+        sleep 2  # beri waktu Xvfb start
+        scrot screen/screenshot.png
 
     - name: Upload Screenshot
       uses: actions/upload-artifact@v4
