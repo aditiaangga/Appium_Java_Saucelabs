@@ -8,7 +8,7 @@ jobs:
     runs-on: windows-latest
     steps:
     - name: Install PowerShell module
-      run: Install-Module -Name PowerShellCookbook -Force -Scope CurrentUser
+      run: Install-Module -Name PowerShellCookbook -Force -Scope CurrentUser -AllowClobber
 
     - name: Capture screenshot
       run: |
