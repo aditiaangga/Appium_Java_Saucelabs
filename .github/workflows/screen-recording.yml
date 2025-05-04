@@ -1,0 +1,26 @@
+name: Screen Recording
+
+on:
+  workflow_dispatch:
+
+jobs:
+  record-screen:
+    runs-on: windows-latest
+    steps:
+    - name: Install Chocolatey (FFmpeg dependency)
+      run: |
+        Set-ExecutionPolicy Bypass -Scope Process -Force
+        iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+
+    - name: Install FFmpeg
+      run: choco install ffmpeg -y
+
+    - name: Record Screen with FFmpeg
+      run: |
+        ffmpeg -y -f gdigrab -framerate 1 -t 10 -i desktop screen-recording.mp4
+
+    - name: Upload Recording
+      uses: actions/upload-artifact@v4
+      with:
+        name: screen-recording
+        path: screen-recording.mp4
