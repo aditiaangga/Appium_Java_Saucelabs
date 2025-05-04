@@ -59,7 +59,7 @@ jobs:
 
       - name: Download ZIP File
         run: |
-          curl -L -o ~/Downloads/sample-app.zip "https://github.com/appium/appium/blob/master/packages/appium/sample-code/apps/TestApp.app.zip"
+          curl -L -o ~/Downloads/sample-app.zip "https://github.com/cloudgrey-io/the-app/releases/download/v1.10.0/TheApp-v1.10.0.app.zip"
 
       - name: Extract ZIP
         run: |
