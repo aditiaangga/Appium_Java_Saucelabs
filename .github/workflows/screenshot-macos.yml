@@ -9,6 +9,7 @@ jobs:
     steps:
     - name: Take Screenshot
       run: |
+        whoami
         mkdir screen
         screencapture screen/screenshot.png
 
