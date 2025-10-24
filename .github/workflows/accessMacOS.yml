@@ -1,35 +1,33 @@
-name: Access macOS Runner via ngrok
+name: macOS SSH Access
 
 on:
   workflow_dispatch:
 
 jobs:
-  open-tunnel:
+  ssh-access:
     runs-on: macos-latest
     steps:
       - name: Install ngrok
-        run: brew install ngrok/ngrok/ngrok
-
-      - name: Authenticate ngrok
-        run: ngrok config add-authtoken ${{ secrets.NGROK_AUTH_TOKEN }}
-
-      - name: Start SSH service
         run: |
+          brew install --cask ngrok
+
+      - name: Start SSH
+        run: |
+          echo "Password: github123"
+          sudo dscl . -passwd /Users/runneradmin github123
           sudo systemsetup -setremotelogin on
-          echo "root:password123" | sudo chpasswd
+          sudo launchctl load -w /System/Library/LaunchDaemons/ssh.plist
 
-      - name: Start ngrok TCP tunnel (port 22)
+      - name: Start ngrok tunnel for SSH
+        env:
+          NGROK_AUTHTOKEN: ${{ secrets.NGROK_AUTHTOKEN }}
         run: |
-          nohup ngrok tcp 22 > ngrok.log &
+          ngrok config add-authtoken "$NGROK_AUTHTOKEN"
+          ngrok tcp 22 > ngrok.log &
           sleep 5
-          grep -o 'tcp://[^ ]*' ngrok.log
+          echo "================ NGROK TUNNEL INFO ================"
+          cat ngrok.log | grep -Eo "tcp://[0-9a-zA-Z\.\-:]+"
+          echo "===================================================="
 
-      - name: Print connection info
-        run: |
-          echo "======================================"
-          echo "Ngrok SSH Tunnel Info:"
-          grep -o 'tcp://[^ ]*' ngrok.log
-          echo "Use this command to connect:"
-          echo "ssh root@<ngrok-host> -p <ngrok-port>"
-          echo "Password: password123"
-          echo "======================================"
+      - name: Keep session alive
+        run: sleep 1h
