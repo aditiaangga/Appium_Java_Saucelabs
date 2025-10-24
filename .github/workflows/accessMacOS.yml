@@ -33,7 +33,7 @@ jobs:
 
       - name: Start ngrok tunnel for SSH
         env:
-          NGROK_AUTHTOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
+          NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
         run: |
           ngrok config add-authtoken "$NGROK_AUTH_TOKEN"
           ngrok tcp 22 > ngrok.log &
