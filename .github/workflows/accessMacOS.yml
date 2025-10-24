@@ -1,4 +1,4 @@
-NGROK_AUTH_TOKENname: macOS SSH Access (Stable)
+name: macOS SSH Access (Stable)
 
 on:
   workflow_dispatch:
