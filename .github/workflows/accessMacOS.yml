@@ -1,4 +1,4 @@
-name: macOS SSH Access
+name: macOS SSH Access (Stable)
 
 on:
   workflow_dispatch:
@@ -6,17 +6,30 @@ on:
 jobs:
   ssh-access:
     runs-on: macos-latest
+
     steps:
       - name: Install ngrok
-        run: |
-          brew install --cask ngrok
+        run: brew install --cask ngrok
 
-      - name: Start SSH
+      - name: Create new SSH user
         run: |
-          echo "Password: github123"
-          sudo dscl . -passwd /Users/runner github123
+          USERNAME=ghuser
+          PASSWORD=github123
+
+          # Buat user baru
+          sudo sysadminctl -addUser $USERNAME -password $PASSWORD
+
+          # Masukkan user ke grup admin
+          sudo dscl . -append /Groups/admin GroupMembership $USERNAME
+
+          # Aktifkan Remote Login (SSH)
           sudo systemsetup -setremotelogin on
+
+          # Pastikan service SSH berjalan
           sudo launchctl load -w /System/Library/LaunchDaemons/ssh.plist
+
+          echo "✅ User '$USERNAME' dibuat dengan password '$PASSWORD'"
+          echo "✅ SSH sudah aktif"
 
       - name: Start ngrok tunnel for SSH
         env:
@@ -29,5 +42,5 @@ jobs:
           cat ngrok.log | grep -Eo "tcp://[0-9a-zA-Z\.\-:]+"
           echo "===================================================="
 
-      - name: Keep session alive
+      - name: Keep runner alive
         run: sleep 1h
