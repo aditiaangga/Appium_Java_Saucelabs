@@ -14,7 +14,7 @@ jobs:
       - name: Start SSH
         run: |
           echo "Password: github123"
-          sudo dscl . -passwd /Users/runneradmin github123
+          sudo dscl . -passwd /Users/runner github123
           sudo systemsetup -setremotelogin on
           sudo launchctl load -w /System/Library/LaunchDaemons/ssh.plist
 
