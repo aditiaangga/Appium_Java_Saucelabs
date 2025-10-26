@@ -7,6 +7,16 @@ jobs:
   vnc-access:
     runs-on: macos-latest
     steps:
+      - name: Install Xvfb
+        run: |
+          brew update
+          brew install Xvfb
+
+      - name: Start Xvfb
+        run: |
+          Xvfb :99 -screen 0 1280x1024x16 &
+          export DISPLAY=:99
+          
       - name: Create GUI user for VNC
         run: |
           echo "👤 Creating VNC user..."
