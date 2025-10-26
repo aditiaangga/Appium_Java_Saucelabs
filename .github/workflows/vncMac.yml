@@ -7,14 +7,22 @@ jobs:
   vnc-access:
     runs-on: macos-latest
     steps:
-      - name: Enable Screen Sharing (VNC)
+      - name: Create GUI user for VNC
         run: |
-          echo "🔧 Enabling Screen Sharing..."
-          sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.screensharing.plist || true
-          sudo systemsetup -setremotelogin on
-          echo "Setting VNC password..."
-          echo "vncpassword" | perl -we 'print pack("H*", "00000000000000000000000000000000")' | sudo tee /Library/Preferences/com.apple.VNCSettings.txt > /dev/null
-          echo "✅ Screen Sharing enabled."
+          echo "👤 Creating VNC user..."
+          sudo sysadminctl -addUser vncuser -password vncpass
+          sudo dscl . -append /Groups/admin GroupMembership vncuser
+          echo "✅ User 'vncuser' created with password 'vncpass'."
+
+      - name: Enable Remote Management (VNC)
+        run: |
+          echo "🖥️ Enabling Remote Management..."
+          sudo /System/Library/CoreServices/RemoteManagement/ARDAgent.app/Contents/Resources/kickstart \
+            -activate -configure -access -on \
+            -clientopts -setvnclegacy -vnclegacy yes \
+            -clientopts -setvncpw -vncpw vncpass \
+            -restart -agent -privs -all
+          echo "✅ Remote Management with VNC password enabled."
 
       - name: Install ngrok via Homebrew
         run: |
@@ -25,15 +33,16 @@ jobs:
         env:
           NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
         run: |
+          echo "🚀 Starting ngrok tunnel..."
           ngrok config add-authtoken $NGROK_AUTH_TOKEN
           ngrok tcp 5900 > ngrok.log &
           sleep 5
-          echo "Fetching ngrok public URL..."
           NGROK_URL=$(curl -s http://127.0.0.1:4040/api/tunnels | jq -r '.tunnels[0].public_url')
           echo "------------------------------------------------------------"
           echo "🔗 Connect your VNC client to: $NGROK_URL"
           echo "🧠 Example (RealVNC / VNC Viewer): $NGROK_URL"
-          echo "🔑 Password: vncpassword"
+          echo "👤 Username: vncuser"
+          echo "🔑 Password: vncpass"
           echo "------------------------------------------------------------"
 
       - name: Keep session alive for 30 minutes
