@@ -30,4 +30,7 @@ jobs:
           ./ngrok tcp 5900 > /dev/null &
           sleep 5
           echo "🔗 VNC URL:"
-          curl -s http://127.0.0.1:4040/api/tunnels | grep -o 'tcp://[0-9a-zA-Z:.]*'
+          curl -s http://127.0.0.1:4040/api/tunnels | jq -r '.tunnels[0].public_url'
+      
+      - name: Keep runner alive
+        run: sleep 1h
