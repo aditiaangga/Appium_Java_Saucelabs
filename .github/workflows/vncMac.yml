@@ -23,6 +23,7 @@ jobs:
             -clientopts -setvncpw -vncpw vncpass \
             -restart -agent -privs -all
           echo "✅ Remote Management with VNC password enabled."
+          sudo defaults write /Library/Preferences/com.apple.windowserver.plist DisplayResolutionEnabled -bool true
 
       - name: Install ngrok via Homebrew
         run: |
