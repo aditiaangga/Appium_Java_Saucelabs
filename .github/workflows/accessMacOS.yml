@@ -39,7 +39,7 @@ jobs:
           ngrok tcp 22 > ngrok.log &
           sleep 5
           echo "================ NGROK TUNNEL INFO ================"
-          cat ngrok.log | grep -Eo "tcp://[-0-9a-zA-Z.:]+"
+          cat ngrok.log | grep -Eo "tcp://[-0-9a-zA-Z.:]+" || true
           echo "===================================================="
 
       - name: Keep runner alive
