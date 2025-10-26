@@ -24,7 +24,7 @@ jobs:
           ngrok config add-authtoken "$NGROK_AUTH_TOKEN"
 
           # Jalankan ttyd di background
-          nohup ttyd bash > ttyd.log 2>&1 &
+          nohup ttyd --force-pty bash -l > ttyd.log 2>&1 &
 
           # Jalankan ngrok (HTTP tunnel untuk ttyd)
           nohup ngrok http 7681 > ngrok.log 2>&1 &
