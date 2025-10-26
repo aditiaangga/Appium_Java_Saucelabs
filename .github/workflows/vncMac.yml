@@ -7,10 +7,10 @@ jobs:
   vnc-access:
     runs-on: macos-latest
     steps:
-      - name: Install Xvfb
+      - name: Install XQuartz
         run: |
           brew update
-          brew install Xvfb
+          brew install --cask xquartz
 
       - name: Start Xvfb
         run: |
@@ -36,7 +36,6 @@ jobs:
 
       - name: Install ngrok via Homebrew
         run: |
-          brew update
           brew install ngrok jq
 
       - name: Start ngrok TCP tunnel for VNC (port 5900)
