@@ -34,7 +34,7 @@ jobs:
         cmd: adb shell getprop
         cmdOptions: -noaudio -no-boot-anim -no-window
         bootTimeout: 500
-    - uses: actions/upload-artifact@v1
+    - uses: actions/upload-artifact@v3
       with:
         name: logcat
         path: artifacts/logcat.log
@@ -64,7 +64,7 @@ jobs:
           abi: x86
           cmd: adb shell getprop
           bootTimeout: 500
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v3
         with:
           name: logcat
           path: artifacts/logcat.log
