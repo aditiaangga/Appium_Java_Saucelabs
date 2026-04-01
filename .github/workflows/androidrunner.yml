@@ -15,7 +15,7 @@ jobs:
 
   # Start ADB (and verify that pathing is working correctly).
     - run: |
-          sleep 100
+          sleep 500
           adb devices
 
   # Verify $ANDROID_HOME is properly set for later Gradle commands.
