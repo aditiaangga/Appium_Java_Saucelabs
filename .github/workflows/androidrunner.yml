@@ -1,37 +1,70 @@
 name: Android Runner
 on:
   workflow_dispatch:
-    
-env:
-  ANDROID_ARCH: x86_64
-  ANDROID_TARGET: google_apis_playstore
-  API_LEVEL: 33
-  ANDROID_BUILD_TOOLS_VERSION: 33.0.2
-  ANDROID_SDK_PACKAGES: system-images;android-33;google_apis_playstore;x86_64 platforms;android-33 build-tools;33.0.2 platform-tools emulator
-  EMULATOR_TIMEOUT: 350
-  EMULATOR_NAME: nexus
-
 jobs:
-  playwright-emulator:
-    timeout-minutes: 20
-    runs-on: macos-latest
+  test-ubuntu-latest:
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-        
-      - name: Add avdmanager and sdkmanager to system PATH
-        run: |
-            echo "$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME/build-tools/${{ env.ANDROID_BUILD_TOOLS_VERSION }}" >> $GITHUB_PATH
-
-      - name: Install Sdk
-        run: |
-           yes Y | sdkmanager --licenses
-           sdkmanager --install ${ANDROID_SDK_PACKAGES}
-  
-      - name: Build emulator
-        run: |
-            echo "no" | avdmanager --verbose create avd --force -n $EMULATOR_NAME --abi "${ANDROID_TARGET}/${ANDROID_ARCH}" -k "system-images;android-${API_LEVEL};${ANDROID_TARGET};${ANDROID_ARCH}"
-
-      - name: Launch emulator
-        run: |
-          chmod +x ./start_emu_headless.sh
-          EMULATOR_TIMEOUT=$EMULATOR_TIMEOUT EMULATOR_NAME=$EMULATOR_NAME ./start_emu_headless.sh
+    - uses: actions/checkout@v1
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+    - name: test install-sdk
+      run: npm config delete prefix && source ~/.nvm/nvm.sh && nvm install v20.14.0 && npm install && npm ci && npm run build
+      working-directory: install-sdk
+    - name: test emulator-run-cmd
+      run: npm config delete prefix && source ~/.nvm/nvm.sh && nvm install v20.14.0 && npm install && npm ci && npm run build
+      working-directory: emulator-run-cmd
+    - uses: ./install-sdk
+      name: install sdk
+    - run: sdkmanager platform-tools
+    - run: adb devices
+    - name: Enable KVM
+      run: |
+        echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+        sudo udevadm control --reload-rules
+        sudo udevadm trigger --name-match=kvm
+    - uses: ./emulator-run-cmd
+      with:
+        api: 25
+        tag: default
+        abi: x86
+        cmd: adb shell getprop
+        cmdOptions: -noaudio -no-boot-anim -no-window
+        bootTimeout: 500
+    - uses: actions/upload-artifact@v1
+      with:
+        name: logcat
+        path: artifacts/logcat.log
+  test-macos-12:
+    runs-on: macOS-12
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: test install-sdk
+        run: npm config delete prefix && source ~/.nvm/nvm.sh && nvm install v20.14.0 && npm install && npm ci && npm run build
+        working-directory: install-sdk
+      - name: test emulator-run-cmd
+        run: npm config delete prefix && source ~/.nvm/nvm.sh && nvm install v20.14.0 && npm install && npm ci && npm run build
+        working-directory: emulator-run-cmd
+      - uses: ./install-sdk
+        name: install sdk
+      - run: sdkmanager platform-tools
+      - run: adb devices
+      - uses: ./emulator-run-cmd
+        with:
+          api: 25
+          tag: default
+          abi: x86
+          cmd: adb shell getprop
+          bootTimeout: 500
+      - uses: actions/upload-artifact@v1
+        with:
+          name: logcat
+          path: artifacts/logcat.log
